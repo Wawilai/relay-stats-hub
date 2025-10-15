@@ -1,13 +1,7 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Layout from "@/components/Layout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import {
   Table,
   TableBody,
@@ -43,14 +37,13 @@ import * as XLSX from "xlsx";
 import { useToast } from "@/hooks/use-toast";
 
 const Report = () => {
+  const navigate = useNavigate();
   const [startDate, setStartDate] = useState<Date>();
   const [endDate, setEndDate] = useState<Date>();
   const [startTime, setStartTime] = useState("00:00");
   const [endTime, setEndTime] = useState("23:59");
   const [filterType, setFilterType] = useState<"day" | "week" | "month">("day");
   const [currentPage, setCurrentPage] = useState(1);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [selectedReport, setSelectedReport] = useState<any>(null);
   const itemsPerPage = 10;
   const { toast } = useToast();
 
@@ -129,8 +122,7 @@ const Report = () => {
   const paginatedData = reportData.slice(startIndex, endIndex);
 
   const handleViewDetails = (report: any) => {
-    setSelectedReport(report);
-    setIsDialogOpen(true);
+    navigate("/report/details", { state: { reportData: report } });
   };
 
   const handleExport = () => {
@@ -333,43 +325,6 @@ const Report = () => {
             </div>
           </CardContent>
         </Card>
-
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
-            <DialogHeader>
-              <DialogTitle>รายละเอียดรายการบล็อก</DialogTitle>
-              <DialogDescription>
-                {selectedReport && (
-                  <>
-                    วันที่: {selectedReport.date} | โดเมน: {selectedReport.domain} | จำนวนบล็อก: {selectedReport.block} รายการ
-                  </>
-                )}
-              </DialogDescription>
-            </DialogHeader>
-            <div className="mt-4">
-              {selectedReport?.blockedRecipients && selectedReport.blockedRecipients.length > 0 ? (
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>อีเมลผู้รับ</TableHead>
-                      <TableHead>สาเหตุ</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {selectedReport.blockedRecipients.map((recipient: any, idx: number) => (
-                      <TableRow key={idx}>
-                        <TableCell className="font-medium">{recipient.email}</TableCell>
-                        <TableCell className="text-muted-foreground">{recipient.reason}</TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              ) : (
-                <p className="text-center text-muted-foreground py-4">ไม่มีข้อมูลรายการบล็อก</p>
-              )}
-            </div>
-          </DialogContent>
-        </Dialog>
       </div>
     </Layout>
   );
