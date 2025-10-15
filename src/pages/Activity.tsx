@@ -342,7 +342,7 @@ const Activity = () => {
           <CardHeader>
             <CardTitle>รายการ Activity</CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-0">
             <div className="overflow-x-auto">
               <Table>
                 <TableHeader>
@@ -394,7 +394,7 @@ const Activity = () => {
               </Table>
             </div>
             
-            <div className="mt-4 flex items-center justify-between">
+            <div className="mt-4 px-6 pb-6 flex items-center justify-between">
               <p className="text-sm text-muted-foreground">
                 แสดง {startIndex + 1} - {Math.min(endIndex, activityData.length)} จาก {activityData.length} รายการ
               </p>

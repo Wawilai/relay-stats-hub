@@ -90,7 +90,7 @@ const ActivityDetails = () => {
               </Button>
             </div>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-0">
             {failedRecipients.length > 0 ? (
               <>
                 <Table>
@@ -114,7 +114,7 @@ const ActivityDetails = () => {
                   </TableBody>
                 </Table>
 
-                <div className="mt-4 flex items-center justify-between">
+                <div className="mt-4 px-6 pb-6 flex items-center justify-between">
                   <p className="text-sm text-muted-foreground">
                     แสดง {startIndex + 1} - {Math.min(endIndex, failedRecipients.length)} จาก {failedRecipients.length} รายการ
                   </p>
@@ -164,7 +164,7 @@ const ActivityDetails = () => {
                 </div>
               </>
             ) : (
-              <p className="text-center text-muted-foreground py-8">ไม่มีข้อมูลรายการที่ส่งไม่สำเร็จ</p>
+              <p className="text-center text-muted-foreground py-8 px-6">ไม่มีข้อมูลรายการที่ส่งไม่สำเร็จ</p>
             )}
           </CardContent>
         </Card>
