@@ -1,14 +1,7 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import Layout from "@/components/Layout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Download } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
@@ -47,8 +40,8 @@ const ReportDetails = () => {
   const handleExport = () => {
     try {
       const exportData = blockedRecipients.map((recipient: any) => ({
-        "อีเมลผู้รับ": recipient.email,
-        "สาเหตุ": recipient.reason,
+        อีเมลผู้รับ: recipient.email,
+        สาเหตุ: recipient.reason,
       }));
 
       const worksheet = XLSX.utils.json_to_sheet(exportData);
@@ -75,15 +68,11 @@ const ReportDetails = () => {
     <Layout>
       <div className="space-y-6">
         <div className="flex items-center gap-4">
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={() => navigate("/report")}
-          >
+          <Button variant="outline" size="icon" onClick={() => navigate("/report")}>
             <ArrowLeft className="h-4 w-4" />
           </Button>
           <div>
-            <h2 className="text-3xl font-bold">รายละเอียดรายการบล็อก</h2>
+            <h2 className="text-3xl font-bold">รายละเอียดรายการส่งล้มเหลว</h2>
             <p className="text-muted-foreground mt-1">
               วันที่: {reportData.date} | โดเมน: {reportData.domain} | จำนวนบล็อก: {reportData.block} รายการ
             </p>
@@ -93,7 +82,7 @@ const ReportDetails = () => {
         <Card>
           <CardHeader>
             <div className="flex items-center justify-between">
-              <CardTitle>รายการอีเมลที่ถูกบล็อก</CardTitle>
+              <CardTitle>รายการอีเมลที่ส่งล้มเหลว</CardTitle>
               <Button onClick={handleExport} variant="outline" size="sm">
                 <Download className="mr-2 h-4 w-4" />
                 Export Excel
@@ -114,9 +103,7 @@ const ReportDetails = () => {
                   <TableBody>
                     {paginatedRecipients.map((recipient: any, idx: number) => (
                       <TableRow key={idx}>
-                        <TableCell className="text-muted-foreground">
-                          {startIndex + idx + 1}
-                        </TableCell>
+                        <TableCell className="text-muted-foreground">{startIndex + idx + 1}</TableCell>
                         <TableCell className="font-medium">{recipient.email}</TableCell>
                         <TableCell className="text-muted-foreground">{recipient.reason}</TableCell>
                       </TableRow>
@@ -126,18 +113,19 @@ const ReportDetails = () => {
 
                 <div className="mt-4 flex items-center justify-between">
                   <p className="text-sm text-muted-foreground">
-                    แสดง {startIndex + 1} - {Math.min(endIndex, blockedRecipients.length)} จาก {blockedRecipients.length} รายการ
+                    แสดง {startIndex + 1} - {Math.min(endIndex, blockedRecipients.length)} จาก{" "}
+                    {blockedRecipients.length} รายการ
                   </p>
                   {totalPages > 1 && (
                     <Pagination>
                       <PaginationContent>
                         <PaginationItem>
-                          <PaginationPrevious 
-                            onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                          <PaginationPrevious
+                            onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
                             className={currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
                           />
                         </PaginationItem>
-                        
+
                         {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => {
                           let page;
                           if (totalPages <= 5) {
@@ -161,10 +149,10 @@ const ReportDetails = () => {
                             </PaginationItem>
                           );
                         })}
-                        
+
                         <PaginationItem>
-                          <PaginationNext 
-                            onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                          <PaginationNext
+                            onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
                             className={currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"}
                           />
                         </PaginationItem>
