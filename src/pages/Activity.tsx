@@ -13,6 +13,14 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 import { CalendarIcon, Download } from "lucide-react";
 import { format } from "date-fns";
 import { th } from "date-fns/locale";
@@ -23,46 +31,38 @@ const Activity = () => {
   const [endDate, setEndDate] = useState<Date>();
   const [senderEmail, setSenderEmail] = useState("");
   const [receiverEmail, setReceiverEmail] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
-  // Mock activity data
+  // Mock activity data (expanded for pagination demo)
   const activityData = [
-    {
-      date: "2025-01-15 14:23:45",
-      sender: "admin@company.com",
-      status: "ส่งสำเร็จ",
-      total: 150,
-      failed: 5,
-      success: 145,
-      queue: 0,
-    },
-    {
-      date: "2025-01-15 13:15:22",
-      sender: "marketing@company.com",
-      status: "มีบางส่วนล้มเหลว",
-      total: 320,
-      failed: 28,
-      success: 292,
-      queue: 0,
-    },
-    {
-      date: "2025-01-15 11:45:10",
-      sender: "support@company.com",
-      status: "ส่งสำเร็จ",
-      total: 89,
-      failed: 0,
-      success: 89,
-      queue: 0,
-    },
-    {
-      date: "2025-01-15 09:30:55",
-      sender: "sales@company.com",
-      status: "กำลังส่ง",
-      total: 500,
-      failed: 12,
-      success: 453,
-      queue: 35,
-    },
+    { date: "2025-01-15 14:23:45", sender: "admin@company.com", status: "ส่งสำเร็จ", total: 150, failed: 5, success: 145, queue: 0 },
+    { date: "2025-01-15 13:15:22", sender: "marketing@company.com", status: "มีบางส่วนล้มเหลว", total: 320, failed: 28, success: 292, queue: 0 },
+    { date: "2025-01-15 11:45:10", sender: "support@company.com", status: "ส่งสำเร็จ", total: 89, failed: 0, success: 89, queue: 0 },
+    { date: "2025-01-15 09:30:55", sender: "sales@company.com", status: "กำลังส่ง", total: 500, failed: 12, success: 453, queue: 35 },
+    { date: "2025-01-14 16:45:30", sender: "hr@company.com", status: "ส่งสำเร็จ", total: 234, failed: 3, success: 231, queue: 0 },
+    { date: "2025-01-14 15:20:18", sender: "admin@company.com", status: "ส่งสำเร็จ", total: 178, failed: 8, success: 170, queue: 0 },
+    { date: "2025-01-14 14:10:42", sender: "marketing@company.com", status: "มีบางส่วนล้มเหลว", total: 445, failed: 35, success: 410, queue: 0 },
+    { date: "2025-01-14 12:35:15", sender: "support@company.com", status: "ส่งสำเร็จ", total: 123, failed: 2, success: 121, queue: 0 },
+    { date: "2025-01-14 10:50:33", sender: "sales@company.com", status: "ส่งสำเร็จ", total: 267, failed: 7, success: 260, queue: 0 },
+    { date: "2025-01-14 09:15:28", sender: "info@company.com", status: "กำลังส่ง", total: 389, failed: 15, success: 356, queue: 18 },
+    { date: "2025-01-13 17:30:50", sender: "admin@company.com", status: "ส่งสำเร็จ", total: 156, failed: 4, success: 152, queue: 0 },
+    { date: "2025-01-13 16:22:10", sender: "marketing@company.com", status: "ส่งสำเร็จ", total: 298, failed: 9, success: 289, queue: 0 },
+    { date: "2025-01-13 15:18:45", sender: "support@company.com", status: "มีบางส่วนล้มเหลว", total: 189, failed: 22, success: 167, queue: 0 },
+    { date: "2025-01-13 14:05:33", sender: "sales@company.com", status: "ส่งสำเร็จ", total: 334, failed: 5, success: 329, queue: 0 },
+    { date: "2025-01-13 11:40:22", sender: "hr@company.com", status: "ส่งสำเร็จ", total: 145, failed: 3, success: 142, queue: 0 },
+    { date: "2025-01-12 16:55:18", sender: "admin@company.com", status: "ส่งสำเร็จ", total: 223, failed: 6, success: 217, queue: 0 },
+    { date: "2025-01-12 15:25:40", sender: "marketing@company.com", status: "กำลังส่ง", total: 456, failed: 18, success: 423, queue: 15 },
+    { date: "2025-01-12 14:12:55", sender: "support@company.com", status: "ส่งสำเร็จ", total: 167, failed: 4, success: 163, queue: 0 },
+    { date: "2025-01-12 12:48:30", sender: "sales@company.com", status: "ส่งสำเร็จ", total: 289, failed: 7, success: 282, queue: 0 },
+    { date: "2025-01-12 10:30:15", sender: "info@company.com", status: "มีบางส่วนล้มเหลว", total: 378, failed: 31, success: 347, queue: 0 },
   ];
+
+  // Pagination calculations
+  const totalPages = Math.ceil(activityData.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedData = activityData.slice(startIndex, endIndex);
 
   const handleExport = () => {
     toast.success("กำลัง Export ข้อมูลเป็นไฟล์ Excel");
@@ -157,7 +157,7 @@ const Activity = () => {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {activityData.map((item, index) => (
+                  {paginatedData.map((item, index) => (
                     <TableRow key={index}>
                       <TableCell className="whitespace-nowrap">{item.date}</TableCell>
                       <TableCell className="font-medium">{item.sender}</TableCell>
@@ -190,6 +190,41 @@ const Activity = () => {
                   ))}
                 </TableBody>
               </Table>
+            </div>
+            
+            <div className="mt-4 flex items-center justify-between">
+              <p className="text-sm text-muted-foreground">
+                แสดง {startIndex + 1} - {Math.min(endIndex, activityData.length)} จาก {activityData.length} รายการ
+              </p>
+              <Pagination>
+                <PaginationContent>
+                  <PaginationItem>
+                    <PaginationPrevious 
+                      onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                      className={currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                    />
+                  </PaginationItem>
+                  
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                    <PaginationItem key={page}>
+                      <PaginationLink
+                        onClick={() => setCurrentPage(page)}
+                        isActive={currentPage === page}
+                        className="cursor-pointer"
+                      >
+                        {page}
+                      </PaginationLink>
+                    </PaginationItem>
+                  ))}
+                  
+                  <PaginationItem>
+                    <PaginationNext 
+                      onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                      className={currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                    />
+                  </PaginationItem>
+                </PaginationContent>
+              </Pagination>
             </div>
           </CardContent>
         </Card>
