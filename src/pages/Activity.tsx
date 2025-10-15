@@ -29,6 +29,8 @@ import { toast } from "sonner";
 const Activity = () => {
   const [startDate, setStartDate] = useState<Date>();
   const [endDate, setEndDate] = useState<Date>();
+  const [startTime, setStartTime] = useState("00:00");
+  const [endTime, setEndTime] = useState("23:59");
   const [senderEmail, setSenderEmail] = useState("");
   const [receiverEmail, setReceiverEmail] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -86,32 +88,48 @@ const Activity = () => {
           <CardContent>
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
               <div className="space-y-2">
-                <label className="text-sm font-medium">วันที่เริ่มต้น</label>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button variant="outline" className="w-full justify-start text-left">
-                      <CalendarIcon className="mr-2 h-4 w-4" />
-                      {startDate ? format(startDate, "PPP", { locale: th }) : "เลือกวันที่"}
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0">
-                    <Calendar mode="single" selected={startDate} onSelect={setStartDate} locale={th} />
-                  </PopoverContent>
-                </Popover>
+                <label className="text-sm font-medium">วันที่และเวลาเริ่มต้น</label>
+                <div className="flex gap-2">
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button variant="outline" className="flex-1 justify-start text-left">
+                        <CalendarIcon className="mr-2 h-4 w-4" />
+                        {startDate ? format(startDate, "dd/MM/yyyy", { locale: th }) : "เลือกวันที่"}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0">
+                      <Calendar mode="single" selected={startDate} onSelect={setStartDate} locale={th} />
+                    </PopoverContent>
+                  </Popover>
+                  <Input
+                    type="time"
+                    value={startTime}
+                    onChange={(e) => setStartTime(e.target.value)}
+                    className="w-[130px]"
+                  />
+                </div>
               </div>
               <div className="space-y-2">
-                <label className="text-sm font-medium">วันที่สิ้นสุด</label>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button variant="outline" className="w-full justify-start text-left">
-                      <CalendarIcon className="mr-2 h-4 w-4" />
-                      {endDate ? format(endDate, "PPP", { locale: th }) : "เลือกวันที่"}
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0">
-                    <Calendar mode="single" selected={endDate} onSelect={setEndDate} locale={th} />
-                  </PopoverContent>
-                </Popover>
+                <label className="text-sm font-medium">วันที่และเวลาสิ้นสุด</label>
+                <div className="flex gap-2">
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button variant="outline" className="flex-1 justify-start text-left">
+                        <CalendarIcon className="mr-2 h-4 w-4" />
+                        {endDate ? format(endDate, "dd/MM/yyyy", { locale: th }) : "เลือกวันที่"}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0">
+                      <Calendar mode="single" selected={endDate} onSelect={setEndDate} locale={th} />
+                    </PopoverContent>
+                  </Popover>
+                  <Input
+                    type="time"
+                    value={endTime}
+                    onChange={(e) => setEndTime(e.target.value)}
+                    className="w-[130px]"
+                  />
+                </div>
               </div>
               <div className="space-y-2">
                 <label className="text-sm font-medium">อีเมลผู้ส่ง</label>
