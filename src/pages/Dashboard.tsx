@@ -2,6 +2,7 @@ import { useState } from "react";
 import Layout from "@/components/Layout";
 import KPICard from "@/components/dashboard/KPICard";
 import EmailChart from "@/components/dashboard/EmailChart";
+import TimeDistributionChart from "@/components/dashboard/TimeDistributionChart";
 import TopFailureTable from "@/components/dashboard/TopFailureTable";
 import { Button } from "@/components/ui/button";
 import { Mail, CheckCircle2, ShieldAlert, XCircle } from "lucide-react";
@@ -33,6 +34,18 @@ const Dashboard = () => {
     { date: "สัปดาห์ 2", sending: 15234, success: 14567, block: 423, reject: 244 },
     { date: "สัปดาห์ 3", sending: 16500, success: 15800, block: 450, reject: 250 },
     { date: "สัปดาห์ 4", sending: 14800, success: 14200, block: 400, reject: 200 },
+  ];
+
+  // Mock data for time distribution
+  const timeDistribution = [
+    { timeRange: "00:00-03:00", count: 324 },
+    { timeRange: "03:00-06:00", count: 156 },
+    { timeRange: "06:00-09:00", count: 1823 },
+    { timeRange: "09:00-12:00", count: 3456 },
+    { timeRange: "12:00-15:00", count: 2987 },
+    { timeRange: "15:00-18:00", count: 3124 },
+    { timeRange: "18:00-21:00", count: 2145 },
+    { timeRange: "21:00-24:00", count: 1219 },
   ];
 
   // Mock data for top failures
@@ -95,6 +108,8 @@ const Dashboard = () => {
         </div>
 
         <EmailChart data={chartData} />
+
+        <TimeDistributionChart data={timeDistribution} />
 
         <TopFailureTable data={topFailures} />
       </div>
