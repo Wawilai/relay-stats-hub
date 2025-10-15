@@ -77,7 +77,7 @@ const ActivityDetails = () => {
           <div>
             <h2 className="text-3xl font-bold">รายการที่ส่งไม่สำเร็จ</h2>
             <p className="text-muted-foreground mt-1">
-              วันที่ส่ง: {activityData.date} | ผู้ส่ง: {activityData.sender} | สถานะ: {activityData.status} | รายการล้มเหลว: {activityData.failed} รายการ
+              วันที่ส่ง: {activityData.date} | ผู้ส่ง: {activityData.sender} | สถานะ: {activityData.status}
             </p>
           </div>
         </div>
