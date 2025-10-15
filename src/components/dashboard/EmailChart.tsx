@@ -4,7 +4,7 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 interface EmailChartProps {
   data: Array<{
     date: string;
-    sending: number;
+    total: number;
     success: number;
     fail: number;
   }>;
