@@ -21,7 +21,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-import { CalendarIcon, Download } from "lucide-react";
+import { CalendarIcon, Download, ChevronDown, ChevronRight } from "lucide-react";
 import { format } from "date-fns";
 import { th } from "date-fns/locale";
 import { toast } from "sonner";
@@ -34,30 +34,170 @@ const Activity = () => {
   const [senderEmail, setSenderEmail] = useState("");
   const [receiverEmail, setReceiverEmail] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [expandedRow, setExpandedRow] = useState<number | null>(null);
   const itemsPerPage = 10;
 
-  // Mock activity data (expanded for pagination demo)
+  // Mock activity data with failed recipients details
   const activityData = [
-    { date: "2025-01-15 14:23:45", sender: "admin@company.com", status: "ส่งสำเร็จ", total: 150, failed: 5, success: 145, queue: 0 },
-    { date: "2025-01-15 13:15:22", sender: "marketing@company.com", status: "มีบางส่วนล้มเหลว", total: 320, failed: 28, success: 292, queue: 0 },
-    { date: "2025-01-15 11:45:10", sender: "support@company.com", status: "ส่งสำเร็จ", total: 89, failed: 0, success: 89, queue: 0 },
-    { date: "2025-01-15 09:30:55", sender: "sales@company.com", status: "กำลังส่ง", total: 500, failed: 12, success: 453, queue: 35 },
-    { date: "2025-01-14 16:45:30", sender: "hr@company.com", status: "ส่งสำเร็จ", total: 234, failed: 3, success: 231, queue: 0 },
-    { date: "2025-01-14 15:20:18", sender: "admin@company.com", status: "ส่งสำเร็จ", total: 178, failed: 8, success: 170, queue: 0 },
-    { date: "2025-01-14 14:10:42", sender: "marketing@company.com", status: "มีบางส่วนล้มเหลว", total: 445, failed: 35, success: 410, queue: 0 },
-    { date: "2025-01-14 12:35:15", sender: "support@company.com", status: "ส่งสำเร็จ", total: 123, failed: 2, success: 121, queue: 0 },
-    { date: "2025-01-14 10:50:33", sender: "sales@company.com", status: "ส่งสำเร็จ", total: 267, failed: 7, success: 260, queue: 0 },
-    { date: "2025-01-14 09:15:28", sender: "info@company.com", status: "กำลังส่ง", total: 389, failed: 15, success: 356, queue: 18 },
-    { date: "2025-01-13 17:30:50", sender: "admin@company.com", status: "ส่งสำเร็จ", total: 156, failed: 4, success: 152, queue: 0 },
-    { date: "2025-01-13 16:22:10", sender: "marketing@company.com", status: "ส่งสำเร็จ", total: 298, failed: 9, success: 289, queue: 0 },
-    { date: "2025-01-13 15:18:45", sender: "support@company.com", status: "มีบางส่วนล้มเหลว", total: 189, failed: 22, success: 167, queue: 0 },
-    { date: "2025-01-13 14:05:33", sender: "sales@company.com", status: "ส่งสำเร็จ", total: 334, failed: 5, success: 329, queue: 0 },
-    { date: "2025-01-13 11:40:22", sender: "hr@company.com", status: "ส่งสำเร็จ", total: 145, failed: 3, success: 142, queue: 0 },
-    { date: "2025-01-12 16:55:18", sender: "admin@company.com", status: "ส่งสำเร็จ", total: 223, failed: 6, success: 217, queue: 0 },
-    { date: "2025-01-12 15:25:40", sender: "marketing@company.com", status: "กำลังส่ง", total: 456, failed: 18, success: 423, queue: 15 },
-    { date: "2025-01-12 14:12:55", sender: "support@company.com", status: "ส่งสำเร็จ", total: 167, failed: 4, success: 163, queue: 0 },
-    { date: "2025-01-12 12:48:30", sender: "sales@company.com", status: "ส่งสำเร็จ", total: 289, failed: 7, success: 282, queue: 0 },
-    { date: "2025-01-12 10:30:15", sender: "info@company.com", status: "มีบางส่วนล้มเหลว", total: 378, failed: 31, success: 347, queue: 0 },
+    { 
+      date: "2025-01-15 14:23:45", 
+      sender: "admin@company.com", 
+      status: "ส่งสำเร็จ", 
+      total: 150, 
+      failed: 5, 
+      success: 145,
+      failedRecipients: [
+        { email: "invalid@domain.com", reason: "Invalid domain" },
+        { email: "user1@example.com", reason: "Mailbox full" },
+        { email: "user2@example.com", reason: "User not found" },
+        { email: "blocked@spam.com", reason: "Blocked by spam filter" },
+        { email: "bounce@test.com", reason: "Hard bounce" },
+      ]
+    },
+    { 
+      date: "2025-01-15 13:15:22", 
+      sender: "marketing@company.com", 
+      status: "มีบางส่วนล้มเหลว", 
+      total: 320, 
+      failed: 28, 
+      success: 292,
+      failedRecipients: [
+        { email: "expired@domain.com", reason: "Domain expired" },
+        { email: "full@mailbox.com", reason: "Mailbox full" },
+        { email: "invalid@test.com", reason: "Invalid email format" },
+      ]
+    },
+    { date: "2025-01-15 11:45:10", sender: "support@company.com", status: "ส่งสำเร็จ", total: 89, failed: 0, success: 89, failedRecipients: [] },
+    { 
+      date: "2025-01-15 09:30:55", 
+      sender: "sales@company.com", 
+      status: "กำลังส่ง", 
+      total: 500, 
+      failed: 12, 
+      success: 453,
+      failedRecipients: [
+        { email: "temp@block.com", reason: "Temporary block" },
+        { email: "quota@exceeded.com", reason: "Quota exceeded" },
+      ]
+    },
+    { 
+      date: "2025-01-14 16:45:30", 
+      sender: "hr@company.com", 
+      status: "ส่งสำเร็จ", 
+      total: 234, 
+      failed: 3, 
+      success: 231,
+      failedRecipients: [
+        { email: "deactivated@user.com", reason: "Account deactivated" },
+        { email: "moved@away.com", reason: "User moved" },
+        { email: "noreply@test.com", reason: "No reply address" },
+      ]
+    },
+    { 
+      date: "2025-01-14 15:20:18", 
+      sender: "admin@company.com", 
+      status: "ส่งสำเร็จ", 
+      total: 178, 
+      failed: 8, 
+      success: 170,
+      failedRecipients: [
+        { email: "spam@filter.com", reason: "Spam filter rejection" },
+        { email: "blacklist@domain.com", reason: "Blacklisted domain" },
+      ]
+    },
+    { 
+      date: "2025-01-14 14:10:42", 
+      sender: "marketing@company.com", 
+      status: "มีบางส่วนล้มเหลว", 
+      total: 445, 
+      failed: 35, 
+      success: 410,
+      failedRecipients: [
+        { email: "bounce@hard.com", reason: "Hard bounce" },
+        { email: "soft@bounce.com", reason: "Soft bounce" },
+        { email: "timeout@server.com", reason: "Connection timeout" },
+      ]
+    },
+    { 
+      date: "2025-01-14 12:35:15", 
+      sender: "support@company.com", 
+      status: "ส่งสำเร็จ", 
+      total: 123, 
+      failed: 2, 
+      success: 121,
+      failedRecipients: [
+        { email: "dns@error.com", reason: "DNS lookup failed" },
+        { email: "refused@connection.com", reason: "Connection refused" },
+      ]
+    },
+    { 
+      date: "2025-01-14 10:50:33", 
+      sender: "sales@company.com", 
+      status: "ส่งสำเร็จ", 
+      total: 267, 
+      failed: 7, 
+      success: 260,
+      failedRecipients: [
+        { email: "greylisted@server.com", reason: "Greylisted" },
+        { email: "rate@limit.com", reason: "Rate limit exceeded" },
+      ]
+    },
+    { 
+      date: "2025-01-14 09:15:28", 
+      sender: "info@company.com", 
+      status: "กำลังส่ง", 
+      total: 389, 
+      failed: 15, 
+      success: 356,
+      failedRecipients: [
+        { email: "virus@detected.com", reason: "Virus detected in content" },
+        { email: "policy@violation.com", reason: "Policy violation" },
+      ]
+    },
+    { date: "2025-01-13 17:30:50", sender: "admin@company.com", status: "ส่งสำเร็จ", total: 156, failed: 4, success: 152, failedRecipients: [] },
+    { date: "2025-01-13 16:22:10", sender: "marketing@company.com", status: "ส่งสำเร็จ", total: 298, failed: 9, success: 289, failedRecipients: [] },
+    { 
+      date: "2025-01-13 15:18:45", 
+      sender: "support@company.com", 
+      status: "มีบางส่วนล้มเหลว", 
+      total: 189, 
+      failed: 22, 
+      success: 167,
+      failedRecipients: [
+        { email: "disabled@account.com", reason: "Account disabled" },
+        { email: "full@storage.com", reason: "Storage full" },
+      ]
+    },
+    { date: "2025-01-13 14:05:33", sender: "sales@company.com", status: "ส่งสำเร็จ", total: 334, failed: 5, success: 329, failedRecipients: [] },
+    { date: "2025-01-13 11:40:22", sender: "hr@company.com", status: "ส่งสำเร็จ", total: 145, failed: 3, success: 142, failedRecipients: [] },
+    { date: "2025-01-12 16:55:18", sender: "admin@company.com", status: "ส่งสำเร็จ", total: 223, failed: 6, success: 217, failedRecipients: [] },
+    { 
+      date: "2025-01-12 15:25:40", 
+      sender: "marketing@company.com", 
+      status: "กำลังส่ง", 
+      total: 456, 
+      failed: 18, 
+      success: 423,
+      failedRecipients: [
+        { email: "retry@limit.com", reason: "Retry limit exceeded" },
+        { email: "invalid@mx.com", reason: "Invalid MX record" },
+      ]
+    },
+    { date: "2025-01-12 14:12:55", sender: "support@company.com", status: "ส่งสำเร็จ", total: 167, failed: 4, success: 163, failedRecipients: [] },
+    { date: "2025-01-12 12:48:30", sender: "sales@company.com", status: "ส่งสำเร็จ", total: 289, failed: 7, success: 282, failedRecipients: [] },
+    { 
+      date: "2025-01-12 10:30:15", 
+      sender: "info@company.com", 
+      status: "มีบางส่วนล้มเหลว", 
+      total: 378, 
+      failed: 31, 
+      success: 347,
+      failedRecipients: [
+        { email: "authentication@failed.com", reason: "Authentication failed" },
+        { email: "spf@fail.com", reason: "SPF check failed" },
+        { email: "dkim@fail.com", reason: "DKIM verification failed" },
+      ]
+    },
   ];
 
   // Pagination calculations
@@ -174,34 +314,79 @@ const Activity = () => {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {paginatedData.map((item, index) => (
-                    <TableRow key={index}>
-                      <TableCell className="whitespace-nowrap">{item.date}</TableCell>
-                      <TableCell className="font-medium">{item.sender}</TableCell>
-                      <TableCell>
-                        <span
-                          className={
-                            item.status === "ส่งสำเร็จ"
-                              ? "text-success"
-                              : item.status === "กำลังส่ง"
-                              ? "text-warning"
-                              : "text-destructive"
-                          }
+                  {paginatedData.map((item, index) => {
+                    const globalIndex = startIndex + index;
+                    const isExpanded = expandedRow === globalIndex;
+                    const hasFailures = item.failed > 0;
+
+                    return (
+                      <>
+                        <TableRow 
+                          key={index}
+                          className={hasFailures ? "cursor-pointer hover:bg-muted/50" : ""}
+                          onClick={() => hasFailures && setExpandedRow(isExpanded ? null : globalIndex)}
                         >
-                          {item.status}
-                        </span>
-                      </TableCell>
-                      <TableCell className="text-right font-semibold">
-                        {item.total.toLocaleString()}
-                      </TableCell>
-                      <TableCell className="text-right text-destructive font-semibold">
-                        {item.failed.toLocaleString()}
-                      </TableCell>
-                      <TableCell className="text-right text-success font-semibold">
-                        {item.success.toLocaleString()}
-                      </TableCell>
-                    </TableRow>
-                  ))}
+                          <TableCell className="whitespace-nowrap">
+                            <div className="flex items-center gap-2">
+                              {hasFailures && (
+                                <>
+                                  {isExpanded ? (
+                                    <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                                  ) : (
+                                    <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                                  )}
+                                </>
+                              )}
+                              {item.date}
+                            </div>
+                          </TableCell>
+                          <TableCell className="font-medium">{item.sender}</TableCell>
+                          <TableCell>
+                            <span
+                              className={
+                                item.status === "ส่งสำเร็จ"
+                                  ? "text-success"
+                                  : item.status === "กำลังส่ง"
+                                  ? "text-warning"
+                                  : "text-destructive"
+                              }
+                            >
+                              {item.status}
+                            </span>
+                          </TableCell>
+                          <TableCell className="text-right font-semibold">
+                            {item.total.toLocaleString()}
+                          </TableCell>
+                          <TableCell className="text-right text-destructive font-semibold">
+                            {item.failed.toLocaleString()}
+                          </TableCell>
+                          <TableCell className="text-right text-success font-semibold">
+                            {item.success.toLocaleString()}
+                          </TableCell>
+                        </TableRow>
+                        {isExpanded && hasFailures && (
+                          <TableRow>
+                            <TableCell colSpan={6} className="bg-muted/30 p-4">
+                              <div className="space-y-2">
+                                <h4 className="font-semibold text-sm">รายการที่ส่งไม่สำเร็จ ({item.failedRecipients.length} รายการ)</h4>
+                                <div className="grid gap-2">
+                                  {item.failedRecipients.map((recipient, idx) => (
+                                    <div 
+                                      key={idx} 
+                                      className="flex justify-between items-center p-2 bg-background rounded border border-border"
+                                    >
+                                      <span className="font-medium text-sm">{recipient.email}</span>
+                                      <span className="text-sm text-muted-foreground">{recipient.reason}</span>
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        )}
+                      </>
+                    );
+                  })}
                 </TableBody>
               </Table>
             </div>
