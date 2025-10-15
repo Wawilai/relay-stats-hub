@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Layout from "@/components/Layout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -14,13 +15,6 @@ import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import {
   Pagination,
   PaginationContent,
   PaginationItem,
@@ -34,6 +28,7 @@ import { th } from "date-fns/locale";
 import { toast } from "sonner";
 
 const Activity = () => {
+  const navigate = useNavigate();
   const [startDate, setStartDate] = useState<Date>();
   const [endDate, setEndDate] = useState<Date>();
   const [startTime, setStartTime] = useState("00:00");
@@ -41,8 +36,6 @@ const Activity = () => {
   const [senderEmail, setSenderEmail] = useState("");
   const [receiverEmail, setReceiverEmail] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [selectedActivity, setSelectedActivity] = useState<any>(null);
   const itemsPerPage = 10;
 
   // Mock activity data with failed recipients details
@@ -284,8 +277,7 @@ const Activity = () => {
   };
 
   const handleViewDetails = (item: any) => {
-    setSelectedActivity(item);
-    setIsDialogOpen(true);
+    navigate("/activity/details", { state: { activityData: item } });
   };
 
   return (
@@ -478,37 +470,6 @@ const Activity = () => {
             </div>
           </CardContent>
         </Card>
-
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto">
-            <DialogHeader>
-              <DialogTitle>รายการที่ส่งไม่สำเร็จ</DialogTitle>
-              <DialogDescription>
-                {selectedActivity && (
-                  <>
-                    วันที่ส่ง: {selectedActivity.date} | ผู้ส่ง: {selectedActivity.sender} | 
-                    รายการล้มเหลว: {selectedActivity.failedRecipients.length} รายการ
-                  </>
-                )}
-              </DialogDescription>
-            </DialogHeader>
-            {selectedActivity && (
-              <div className="space-y-3 mt-4">
-                {selectedActivity.failedRecipients.map((recipient: any, idx: number) => (
-                  <div 
-                    key={idx} 
-                    className="flex justify-between items-start p-4 bg-muted/50 rounded-lg border border-border hover:bg-muted transition-colors"
-                  >
-                    <div className="flex-1">
-                      <p className="font-semibold text-sm mb-1">{recipient.email}</p>
-                      <p className="text-sm text-muted-foreground">สาเหตุ: {recipient.reason}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </DialogContent>
-        </Dialog>
       </div>
     </Layout>
   );
