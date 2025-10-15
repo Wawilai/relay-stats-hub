@@ -53,13 +53,12 @@ const Activity = () => {
       date: "2025-01-15 13:15:22", 
       sender: "marketing@company.com", 
       status: "Block", 
-      total: 320, 
-      failed: 320, 
+      total: 1, 
+      failed: 1, 
       success: 0,
-      failedRecipients: Array.from({ length: 320 }, (_, i) => ({
-        email: `user${i + 1}@domain.com`,
-        reason: ["Blocked by spam filter", "IP blacklisted", "Domain reputation low", "Content blocked by filter", "Sender authentication failed"][i % 5]
-      }))
+      failedRecipients: [
+        { email: "user1@domain.com", reason: "Blocked by spam filter" }
+      ]
     },
     { 
       date: "2025-01-15 11:45:10", 
@@ -74,13 +73,12 @@ const Activity = () => {
       date: "2025-01-15 09:30:55", 
       sender: "sales@company.com", 
       status: "Reject", 
-      total: 500, 
-      failed: 500, 
+      total: 1, 
+      failed: 1, 
       success: 0,
-      failedRecipients: Array.from({ length: 500 }, (_, i) => ({
-        email: `recipient${i + 1}@email.com`,
-        reason: ["Recipient address rejected", "Hard bounce - mailbox not found", "Domain does not exist", "Mailbox full", "Account disabled"][i % 5]
-      }))
+      failedRecipients: [
+        { email: "recipient1@email.com", reason: "Recipient address rejected" }
+      ]
     },
     { 
       date: "2025-01-14 16:45:30", 
@@ -95,29 +93,22 @@ const Activity = () => {
       date: "2025-01-14 15:20:18", 
       sender: "admin@company.com", 
       status: "Block", 
-      total: 178, 
-      failed: 178, 
+      total: 1, 
+      failed: 1, 
       success: 0,
       failedRecipients: [
-        { email: "spam1@test.com", reason: "Blocked by recipient's spam filter" },
-        { email: "spam2@test.com", reason: "Sender IP blacklisted" },
-        { email: "spam3@test.com", reason: "Content contains spam keywords" },
-        { email: "spam4@test.com", reason: "SPF authentication failed" },
+        { email: "spam1@test.com", reason: "Blocked by recipient's spam filter" }
       ]
     },
     { 
       date: "2025-01-14 14:10:42", 
       sender: "marketing@company.com", 
       status: "Reject", 
-      total: 445, 
-      failed: 445, 
+      total: 1, 
+      failed: 1, 
       success: 0,
       failedRecipients: [
-        { email: "reject1@bounce.com", reason: "Permanent delivery failure" },
-        { email: "reject2@bounce.com", reason: "User unknown in local recipient table" },
-        { email: "reject3@bounce.com", reason: "Relay access denied" },
-        { email: "reject4@bounce.com", reason: "Connection timeout" },
-        { email: "reject5@bounce.com", reason: "Invalid recipient" },
+        { email: "reject1@bounce.com", reason: "Permanent delivery failure" }
       ]
     },
     { 
@@ -142,14 +133,11 @@ const Activity = () => {
       date: "2025-01-14 09:15:28", 
       sender: "info@company.com", 
       status: "Block", 
-      total: 389, 
-      failed: 389, 
+      total: 1, 
+      failed: 1, 
       success: 0,
       failedRecipients: [
-        { email: "blocked1@provider.com", reason: "Message blocked by email provider" },
-        { email: "blocked2@provider.com", reason: "Policy violation - promotional content" },
-        { email: "blocked3@provider.com", reason: "Rate limit exceeded" },
-        { email: "blocked4@provider.com", reason: "DKIM signature verification failed" },
+        { email: "blocked1@provider.com", reason: "Message blocked by email provider" }
       ]
     },
     { 
@@ -174,14 +162,11 @@ const Activity = () => {
       date: "2025-01-13 15:18:45", 
       sender: "support@company.com", 
       status: "Reject", 
-      total: 189, 
-      failed: 189, 
+      total: 1, 
+      failed: 1, 
       success: 0,
       failedRecipients: [
-        { email: "noreply@closed.com", reason: "Mailbox unavailable" },
-        { email: "old@deactivated.com", reason: "Account deactivated" },
-        { email: "wrong@address.com", reason: "Address not found" },
-        { email: "invalid@format.com", reason: "Invalid email format" },
+        { email: "noreply@closed.com", reason: "Mailbox unavailable" }
       ]
     },
     { 
@@ -215,14 +200,11 @@ const Activity = () => {
       date: "2025-01-12 15:25:40", 
       sender: "marketing@company.com", 
       status: "Block", 
-      total: 456, 
-      failed: 456, 
+      total: 1, 
+      failed: 1, 
       success: 0,
       failedRecipients: [
-        { email: "protect1@domain.com", reason: "Sender blocked by recipient" },
-        { email: "protect2@domain.com", reason: "Message flagged as suspicious" },
-        { email: "protect3@domain.com", reason: "Greylisted by server" },
-        { email: "protect4@domain.com", reason: "Too many recipients" },
+        { email: "protect1@domain.com", reason: "Sender blocked by recipient" }
       ]
     },
     { 
@@ -247,15 +229,11 @@ const Activity = () => {
       date: "2025-01-12 10:30:15", 
       sender: "info@company.com", 
       status: "Reject", 
-      total: 378, 
-      failed: 378, 
+      total: 1, 
+      failed: 1, 
       success: 0,
       failedRecipients: [
-        { email: "dns@error.com", reason: "DNS lookup failed" },
-        { email: "mx@invalid.com", reason: "No valid MX record found" },
-        { email: "connection@refused.com", reason: "Connection refused by server" },
-        { email: "timeout@server.com", reason: "Server timeout" },
-        { email: "quota@exceeded.com", reason: "Recipient quota exceeded" },
+        { email: "dns@error.com", reason: "DNS lookup failed" }
       ]
     },
   ];
