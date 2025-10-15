@@ -14,6 +14,13 @@ import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
   Pagination,
   PaginationContent,
   PaginationItem,
@@ -21,7 +28,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-import { CalendarIcon, Download, ChevronDown, ChevronRight } from "lucide-react";
+import { CalendarIcon, Download, Eye } from "lucide-react";
 import { format } from "date-fns";
 import { th } from "date-fns/locale";
 import { toast } from "sonner";
@@ -34,7 +41,8 @@ const Activity = () => {
   const [senderEmail, setSenderEmail] = useState("");
   const [receiverEmail, setReceiverEmail] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const [expandedRow, setExpandedRow] = useState<number | null>(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [selectedActivity, setSelectedActivity] = useState<any>(null);
   const itemsPerPage = 10;
 
   // Mock activity data with failed recipients details
@@ -210,6 +218,11 @@ const Activity = () => {
     toast.success("กำลัง Export ข้อมูลเป็นไฟล์ Excel");
   };
 
+  const handleViewDetails = (item: any) => {
+    setSelectedActivity(item);
+    setIsDialogOpen(true);
+  };
+
   return (
     <Layout>
       <div className="space-y-6">
@@ -311,80 +324,53 @@ const Activity = () => {
                     <TableHead className="text-right">ทั้งหมด</TableHead>
                     <TableHead className="text-right">ล้มเหลว</TableHead>
                     <TableHead className="text-right">สำเร็จ</TableHead>
+                    <TableHead className="text-center">รายละเอียด</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {paginatedData.map((item, index) => {
-                    const globalIndex = startIndex + index;
-                    const isExpanded = expandedRow === globalIndex;
                     const hasFailures = item.failed > 0;
 
                     return (
-                      <>
-                        <TableRow 
-                          key={index}
-                          className={hasFailures ? "cursor-pointer hover:bg-muted/50" : ""}
-                          onClick={() => hasFailures && setExpandedRow(isExpanded ? null : globalIndex)}
-                        >
-                          <TableCell className="whitespace-nowrap">
-                            <div className="flex items-center gap-2">
-                              {hasFailures && (
-                                <>
-                                  {isExpanded ? (
-                                    <ChevronDown className="h-4 w-4 text-muted-foreground" />
-                                  ) : (
-                                    <ChevronRight className="h-4 w-4 text-muted-foreground" />
-                                  )}
-                                </>
-                              )}
-                              {item.date}
-                            </div>
-                          </TableCell>
-                          <TableCell className="font-medium">{item.sender}</TableCell>
-                          <TableCell>
-                            <span
-                              className={
-                                item.status === "Success"
-                                  ? "text-success"
-                                  : item.status === "Block"
-                                  ? "text-warning"
-                                  : "text-destructive"
-                              }
+                      <TableRow key={index}>
+                        <TableCell className="whitespace-nowrap">{item.date}</TableCell>
+                        <TableCell className="font-medium">{item.sender}</TableCell>
+                        <TableCell>
+                          <span
+                            className={
+                              item.status === "Success"
+                                ? "text-success"
+                                : item.status === "Block"
+                                ? "text-warning"
+                                : "text-destructive"
+                            }
+                          >
+                            {item.status}
+                          </span>
+                        </TableCell>
+                        <TableCell className="text-right font-semibold">
+                          {item.total.toLocaleString()}
+                        </TableCell>
+                        <TableCell className="text-right text-destructive font-semibold">
+                          {item.failed.toLocaleString()}
+                        </TableCell>
+                        <TableCell className="text-right text-success font-semibold">
+                          {item.success.toLocaleString()}
+                        </TableCell>
+                        <TableCell className="text-center">
+                          {hasFailures && (
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleViewDetails(item)}
+                              className="gap-2"
                             >
-                              {item.status}
-                            </span>
-                          </TableCell>
-                          <TableCell className="text-right font-semibold">
-                            {item.total.toLocaleString()}
-                          </TableCell>
-                          <TableCell className="text-right text-destructive font-semibold">
-                            {item.failed.toLocaleString()}
-                          </TableCell>
-                          <TableCell className="text-right text-success font-semibold">
-                            {item.success.toLocaleString()}
-                          </TableCell>
-                        </TableRow>
-                        {isExpanded && hasFailures && (
-                          <TableRow>
-                            <TableCell colSpan={6} className="bg-muted/30 p-4">
-                              <div className="space-y-2">
-                                <h4 className="font-semibold text-sm">รายการที่ส่งไม่สำเร็จ ({item.failedRecipients.length} รายการ)</h4>
-                                <div className="grid gap-2">
-                                  {item.failedRecipients.map((recipient, idx) => (
-                                    <div 
-                                      key={idx} 
-                                      className="flex justify-between items-center p-2 bg-background rounded border border-border"
-                                    >
-                                      <span className="font-medium text-sm">{recipient.email}</span>
-                                      <span className="text-sm text-muted-foreground">{recipient.reason}</span>
-                                    </div>
-                                  ))}
-                                </div>
-                              </div>
-                            </TableCell>
-                          </TableRow>
-                        )}
-                      </>
+                              <Eye className="h-4 w-4" />
+                              ดูรายละเอียด
+                            </Button>
+                          )}
+                        </TableCell>
+                      </TableRow>
                     );
                   })}
                 </TableBody>
@@ -427,6 +413,37 @@ const Activity = () => {
             </div>
           </CardContent>
         </Card>
+
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+          <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle>รายการที่ส่งไม่สำเร็จ</DialogTitle>
+              <DialogDescription>
+                {selectedActivity && (
+                  <>
+                    วันที่ส่ง: {selectedActivity.date} | ผู้ส่ง: {selectedActivity.sender} | 
+                    รายการล้มเหลว: {selectedActivity.failedRecipients.length} รายการ
+                  </>
+                )}
+              </DialogDescription>
+            </DialogHeader>
+            {selectedActivity && (
+              <div className="space-y-3 mt-4">
+                {selectedActivity.failedRecipients.map((recipient: any, idx: number) => (
+                  <div 
+                    key={idx} 
+                    className="flex justify-between items-start p-4 bg-muted/50 rounded-lg border border-border hover:bg-muted transition-colors"
+                  >
+                    <div className="flex-1">
+                      <p className="font-semibold text-sm mb-1">{recipient.email}</p>
+                      <p className="text-sm text-muted-foreground">สาเหตุ: {recipient.reason}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </DialogContent>
+        </Dialog>
       </div>
     </Layout>
   );
