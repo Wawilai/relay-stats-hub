@@ -6,8 +6,7 @@ interface EmailChartProps {
     date: string;
     sending: number;
     success: number;
-    block: number;
-    reject: number;
+    fail: number;
   }>;
 }
 
@@ -54,17 +53,10 @@ const EmailChart = ({ data }: EmailChartProps) => {
             />
             <Line 
               type="monotone" 
-              dataKey="block" 
-              stroke="hsl(var(--chart-3))" 
-              strokeWidth={2}
-              name="Block"
-            />
-            <Line 
-              type="monotone" 
-              dataKey="reject" 
+              dataKey="fail" 
               stroke="hsl(var(--chart-4))" 
               strokeWidth={2}
-              name="Reject"
+              name="Fail"
             />
           </LineChart>
         </ResponsiveContainer>
