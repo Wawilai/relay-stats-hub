@@ -30,7 +30,7 @@ const EmailChart = ({ data }: EmailChartProps) => {
               }}
             />
             <Legend />
-            <Line type="monotone" dataKey="total" stroke="hsl(var(--chart-1))" strokeWidth={2} name="Sending" />
+            <Line type="monotone" dataKey="total" stroke="hsl(var(--chart-1))" strokeWidth={2} name="Total" />
             <Line type="monotone" dataKey="success" stroke="hsl(var(--chart-2))" strokeWidth={2} name="Success" />
             <Line type="monotone" dataKey="fail" stroke="hsl(var(--chart-4))" strokeWidth={2} name="Fail" />
           </LineChart>
