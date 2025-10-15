@@ -153,7 +153,6 @@ const Activity = () => {
                     <TableHead className="text-right">ทั้งหมด</TableHead>
                     <TableHead className="text-right">ล้มเหลว</TableHead>
                     <TableHead className="text-right">สำเร็จ</TableHead>
-                    <TableHead className="text-right">คิว</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -182,9 +181,6 @@ const Activity = () => {
                       </TableCell>
                       <TableCell className="text-right text-success font-semibold">
                         {item.success.toLocaleString()}
-                      </TableCell>
-                      <TableCell className="text-right text-warning font-semibold">
-                        {item.queue.toLocaleString()}
                       </TableCell>
                     </TableRow>
                   ))}
