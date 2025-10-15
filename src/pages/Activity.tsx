@@ -56,13 +56,10 @@ const Activity = () => {
       total: 320, 
       failed: 320, 
       success: 0,
-      failedRecipients: [
-        { email: "user1@domain.com", reason: "Blocked by spam filter" },
-        { email: "user2@domain.com", reason: "IP blacklisted" },
-        { email: "user3@domain.com", reason: "Domain reputation low" },
-        { email: "user4@domain.com", reason: "Content blocked by filter" },
-        { email: "user5@domain.com", reason: "Sender authentication failed" },
-      ]
+      failedRecipients: Array.from({ length: 320 }, (_, i) => ({
+        email: `user${i + 1}@domain.com`,
+        reason: ["Blocked by spam filter", "IP blacklisted", "Domain reputation low", "Content blocked by filter", "Sender authentication failed"][i % 5]
+      }))
     },
     { 
       date: "2025-01-15 11:45:10", 
@@ -80,13 +77,10 @@ const Activity = () => {
       total: 500, 
       failed: 500, 
       success: 0,
-      failedRecipients: [
-        { email: "invalid@notexist.com", reason: "Recipient address rejected" },
-        { email: "bounce@hardbounce.com", reason: "Hard bounce - mailbox not found" },
-        { email: "expired@olddomain.com", reason: "Domain does not exist" },
-        { email: "full@mailbox.com", reason: "Mailbox full" },
-        { email: "disabled@account.com", reason: "Account disabled" },
-      ]
+      failedRecipients: Array.from({ length: 500 }, (_, i) => ({
+        email: `recipient${i + 1}@email.com`,
+        reason: ["Recipient address rejected", "Hard bounce - mailbox not found", "Domain does not exist", "Mailbox full", "Account disabled"][i % 5]
+      }))
     },
     { 
       date: "2025-01-14 16:45:30", 

@@ -49,22 +49,22 @@ const Report = () => {
 
   // Mock report data (expanded for pagination demo)
   const reportData = [
-    { date: "2025-01-15", domain: "gmail.com", success: 2345, block: 45, blockedRecipients: [
-      { email: "user1@gmail.com", reason: "Spam filter" },
-      { email: "user2@gmail.com", reason: "Invalid recipient" },
-      { email: "user3@gmail.com", reason: "Mailbox full" },
-    ]},
-    { date: "2025-01-15", domain: "yahoo.com", success: 1567, block: 32, blockedRecipients: [
-      { email: "test@yahoo.com", reason: "Blocked by recipient" },
-      { email: "admin@yahoo.com", reason: "Policy violation" },
-    ]},
-    { date: "2025-01-15", domain: "hotmail.com", success: 987, block: 23, blockedRecipients: [
-      { email: "info@hotmail.com", reason: "Spam filter" },
-    ]},
-    { date: "2025-01-15", domain: "outlook.com", success: 1823, block: 38, blockedRecipients: [
-      { email: "contact@outlook.com", reason: "Rate limit exceeded" },
-      { email: "support@outlook.com", reason: "Suspicious content" },
-    ]},
+    { date: "2025-01-15", domain: "gmail.com", success: 2345, block: 45, blockedRecipients: Array.from({ length: 45 }, (_, i) => ({
+      email: `user${i + 1}@gmail.com`,
+      reason: ["Spam filter", "Invalid recipient", "Mailbox full", "Rate limit exceeded", "Blocked by recipient"][i % 5]
+    }))},
+    { date: "2025-01-15", domain: "yahoo.com", success: 1567, block: 32, blockedRecipients: Array.from({ length: 32 }, (_, i) => ({
+      email: `test${i + 1}@yahoo.com`,
+      reason: ["Blocked by recipient", "Policy violation", "Spam filter", "Suspicious content"][i % 4]
+    }))},
+    { date: "2025-01-15", domain: "hotmail.com", success: 987, block: 23, blockedRecipients: Array.from({ length: 23 }, (_, i) => ({
+      email: `info${i + 1}@hotmail.com`,
+      reason: ["Spam filter", "Mailbox full", "Invalid recipient"][i % 3]
+    }))},
+    { date: "2025-01-15", domain: "outlook.com", success: 1823, block: 38, blockedRecipients: Array.from({ length: 38 }, (_, i) => ({
+      email: `contact${i + 1}@outlook.com`,
+      reason: ["Rate limit exceeded", "Suspicious content", "Blacklisted sender", "Policy violation"][i % 4]
+    }))},
     { date: "2025-01-15", domain: "aol.com", success: 756, block: 15, blockedRecipients: [
       { email: "user@aol.com", reason: "Blacklisted sender" },
     ]},

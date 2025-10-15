@@ -116,11 +116,11 @@ const ActivityDetails = () => {
                   </TableBody>
                 </Table>
 
-                {totalPages > 1 && (
-                  <div className="mt-4 flex items-center justify-between">
-                    <p className="text-sm text-muted-foreground">
-                      แสดง {startIndex + 1} - {Math.min(endIndex, failedRecipients.length)} จาก {failedRecipients.length} รายการ
-                    </p>
+                <div className="mt-4 flex items-center justify-between">
+                  <p className="text-sm text-muted-foreground">
+                    แสดง {startIndex + 1} - {Math.min(endIndex, failedRecipients.length)} จาก {failedRecipients.length} รายการ
+                  </p>
+                  {totalPages > 1 && (
                     <Pagination>
                       <PaginationContent>
                         <PaginationItem>
@@ -162,8 +162,8 @@ const ActivityDetails = () => {
                         </PaginationItem>
                       </PaginationContent>
                     </Pagination>
-                  </div>
-                )}
+                  )}
+                </div>
               </>
             ) : (
               <p className="text-center text-muted-foreground py-8">ไม่มีข้อมูลรายการที่ส่งไม่สำเร็จ</p>
