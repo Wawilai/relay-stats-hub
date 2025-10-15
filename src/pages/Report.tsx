@@ -16,6 +16,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
@@ -35,7 +36,10 @@ import * as XLSX from "xlsx";
 import { useToast } from "@/hooks/use-toast";
 
 const Report = () => {
-  const [date, setDate] = useState<Date>();
+  const [startDate, setStartDate] = useState<Date>();
+  const [endDate, setEndDate] = useState<Date>();
+  const [startTime, setStartTime] = useState("00:00");
+  const [endTime, setEndTime] = useState("23:59");
   const [filterType, setFilterType] = useState<"day" | "week" | "month">("day");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
@@ -117,38 +121,72 @@ const Report = () => {
             <CardTitle>ค้นหาโดย</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="flex gap-4 items-end">
-              <div className="flex-1 space-y-2">
-                <label className="text-sm font-medium">ประเภทการค้นหา</label>
-                <Select
-                  value={filterType}
-                  onValueChange={(value: "day" | "week" | "month") => setFilterType(value)}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="day">รายวัน</SelectItem>
-                    <SelectItem value="week">รายสัปดาห์</SelectItem>
-                    <SelectItem value="month">รายเดือน</SelectItem>
-                  </SelectContent>
-                </Select>
+            <div className="grid gap-4">
+              <div className="grid gap-4 md:grid-cols-3">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">ประเภทการค้นหา</label>
+                  <Select
+                    value={filterType}
+                    onValueChange={(value: "day" | "week" | "month") => setFilterType(value)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="day">รายวัน</SelectItem>
+                      <SelectItem value="week">รายสัปดาห์</SelectItem>
+                      <SelectItem value="month">รายเดือน</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">วันที่และเวลาเริ่มต้น</label>
+                  <div className="flex gap-2">
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button variant="outline" className="flex-1 justify-start text-left">
+                          <CalendarIcon className="mr-2 h-4 w-4" />
+                          {startDate ? format(startDate, "dd/MM/yyyy", { locale: th }) : "เลือกวันที่"}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0">
+                        <Calendar mode="single" selected={startDate} onSelect={setStartDate} locale={th} />
+                      </PopoverContent>
+                    </Popover>
+                    <Input
+                      type="time"
+                      value={startTime}
+                      onChange={(e) => setStartTime(e.target.value)}
+                      className="w-[130px]"
+                    />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">วันที่และเวลาสิ้นสุด</label>
+                  <div className="flex gap-2">
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button variant="outline" className="flex-1 justify-start text-left">
+                          <CalendarIcon className="mr-2 h-4 w-4" />
+                          {endDate ? format(endDate, "dd/MM/yyyy", { locale: th }) : "เลือกวันที่"}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0">
+                        <Calendar mode="single" selected={endDate} onSelect={setEndDate} locale={th} />
+                      </PopoverContent>
+                    </Popover>
+                    <Input
+                      type="time"
+                      value={endTime}
+                      onChange={(e) => setEndTime(e.target.value)}
+                      className="w-[130px]"
+                    />
+                  </div>
+                </div>
               </div>
-              <div className="flex-1 space-y-2">
-                <label className="text-sm font-medium">เลือกวันที่</label>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button variant="outline" className="w-full justify-start text-left">
-                      <CalendarIcon className="mr-2 h-4 w-4" />
-                      {date ? format(date, "PPP", { locale: th }) : "เลือกวันที่"}
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0">
-                    <Calendar mode="single" selected={date} onSelect={setDate} locale={th} />
-                  </PopoverContent>
-                </Popover>
+              <div>
+                <Button>ค้นหา</Button>
               </div>
-              <Button>ค้นหา</Button>
             </div>
           </CardContent>
         </Card>
