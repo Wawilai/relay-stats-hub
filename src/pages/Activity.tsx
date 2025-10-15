@@ -52,7 +52,7 @@ const Activity = () => {
     { 
       date: "2025-01-15 13:15:22", 
       sender: "marketing@company.com", 
-      status: "Block", 
+      status: "Fail", 
       total: 1, 
       failed: 1, 
       success: 0,
@@ -72,7 +72,7 @@ const Activity = () => {
     { 
       date: "2025-01-15 09:30:55", 
       sender: "sales@company.com", 
-      status: "Reject", 
+      status: "Fail", 
       total: 1, 
       failed: 1, 
       success: 0,
@@ -92,7 +92,7 @@ const Activity = () => {
     { 
       date: "2025-01-14 15:20:18", 
       sender: "admin@company.com", 
-      status: "Block", 
+      status: "Fail", 
       total: 1, 
       failed: 1, 
       success: 0,
@@ -103,7 +103,7 @@ const Activity = () => {
     { 
       date: "2025-01-14 14:10:42", 
       sender: "marketing@company.com", 
-      status: "Reject", 
+      status: "Fail", 
       total: 1, 
       failed: 1, 
       success: 0,
@@ -132,7 +132,7 @@ const Activity = () => {
     { 
       date: "2025-01-14 09:15:28", 
       sender: "info@company.com", 
-      status: "Block", 
+      status: "Fail", 
       total: 1, 
       failed: 1, 
       success: 0,
@@ -161,7 +161,7 @@ const Activity = () => {
     { 
       date: "2025-01-13 15:18:45", 
       sender: "support@company.com", 
-      status: "Reject", 
+      status: "Fail", 
       total: 1, 
       failed: 1, 
       success: 0,
@@ -199,7 +199,7 @@ const Activity = () => {
     { 
       date: "2025-01-12 15:25:40", 
       sender: "marketing@company.com", 
-      status: "Block", 
+      status: "Fail", 
       total: 1, 
       failed: 1, 
       success: 0,
@@ -228,7 +228,7 @@ const Activity = () => {
     { 
       date: "2025-01-12 10:30:15", 
       sender: "info@company.com", 
-      status: "Reject", 
+      status: "Fail", 
       total: 1, 
       failed: 1, 
       success: 0,
@@ -366,8 +366,6 @@ const Activity = () => {
                             className={
                               item.status === "Success"
                                 ? "text-success"
-                                : item.status === "Block"
-                                ? "text-warning"
                                 : "text-destructive"
                             }
                           >
