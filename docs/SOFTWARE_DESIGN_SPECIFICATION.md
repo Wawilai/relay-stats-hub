@@ -565,197 +565,468 @@ Response:
 
 ## 5. คิวรี่ SQL
 
-### 5.1 Dashboard Queries
+คิวรี่ทั้งหมดจัดเรียงตามหน้าจอการใช้งาน เพื่อให้ทีมพัฒนาสามารถนำไปใช้งานได้ทันที
 
-#### 5.1.1 Get KPI Summary
+---
+
+## 5.1 หน้า Dashboard
+
+### 5.1.1 KPI Cards (ข้อมูลภาพรวม)
 ```sql
--- ดึงข้อมูล KPI สำหรับช่วงเวลาที่กำหนด
+-- แสดงค่า KPI: Sending, Success, Block, Reject
+-- ใช้สำหรับ: KPICard components ทั้ง 4 ตัว
 SELECT 
-    SUM(total_recipients) as total_sent,
-    SUM(success_count) as total_success,
-    SUM(failed_count) as total_failed,
-    SUM(block_count) as total_blocked,
-    SUM(reject_count) as total_rejected,
-    ROUND(
-        (SUM(success_count)::DECIMAL / NULLIF(SUM(total_recipients), 0)::DECIMAL) * 100, 
-        2
-    ) as success_rate
+    COUNT(*) as total_sending,
+    SUM(CASE WHEN status = 'success' THEN 1 ELSE 0 END) as total_success,
+    SUM(CASE WHEN status = 'block' THEN 1 ELSE 0 END) as total_block,
+    SUM(CASE WHEN status = 'reject' THEN 1 ELSE 0 END) as total_reject,
+    ROUND(SUM(CASE WHEN status = 'success' THEN 1 ELSE 0 END)::numeric / COUNT(*)::numeric * 100, 2) as success_rate
 FROM email_activities
-WHERE sent_at BETWEEN $1 AND $2
-    AND status IN ('success', 'block', 'reject');
+WHERE sent_date BETWEEN $1 AND $2;
 ```
 
-#### 5.1.2 Get Top Failure Reasons
-```sql
--- ดึง Top 10 สาเหตุที่อีเมลส่งไม่สำเร็จ
-SELECT 
-    failure_reason,
-    COUNT(*) as count,
-    ROUND(
-        (COUNT(*)::DECIMAL / (SELECT COUNT(*) FROM email_failures WHERE occurred_at BETWEEN $1 AND $2)::DECIMAL) * 100,
-        2
-    ) as percentage
-FROM email_failures
-WHERE occurred_at BETWEEN $1 AND $2
-GROUP BY failure_reason
-ORDER BY count DESC
-LIMIT 10;
+**Parameters:**
+- `$1`: วันที่เริ่มต้น (YYYY-MM-DD)
+- `$2`: วันที่สิ้นสุด (YYYY-MM-DD)
+
+**Response:**
+```json
+{
+  "total_sending": 15234,
+  "total_success": 14567,
+  "total_block": 423,
+  "total_reject": 244,
+  "success_rate": 95.62
+}
 ```
 
-#### 5.1.3 Get Email Distribution by Time
+---
+
+### 5.1.2 Email Distribution Chart (Bar Chart)
 ```sql
--- ดึงข้อมูลการส่งอีเมลแยกตามช่วงเวลา
+-- มุมมองรายสัปดาห์ (7 วันล่าสุด)
+-- ใช้สำหรับ: EmailChart component เมื่อเลือกโหมด "weekly"
 SELECT 
-    DATE_TRUNC('hour', sent_at) as hour,
-    COUNT(*) as total_sent,
-    SUM(CASE WHEN status = 'success' THEN 1 ELSE 0 END) as success_count,
-    SUM(CASE WHEN status IN ('block', 'reject') THEN 1 ELSE 0 END) as failed_count
+    DATE(sent_date) as date,
+    TO_CHAR(sent_date, 'Dy') as day_name, -- แปลงเป็นภาษาไทยที่ Frontend
+    COUNT(*) as sending,
+    SUM(CASE WHEN status = 'success' THEN 1 ELSE 0 END) as success,
+    SUM(CASE WHEN status = 'block' THEN 1 ELSE 0 END) as block,
+    SUM(CASE WHEN status = 'reject' THEN 1 ELSE 0 END) as reject
 FROM email_activities
-WHERE sent_at BETWEEN $1 AND $2
-GROUP BY DATE_TRUNC('hour', sent_at)
-ORDER BY hour;
+WHERE sent_date >= CURRENT_DATE - INTERVAL '7 days'
+GROUP BY DATE(sent_date), TO_CHAR(sent_date, 'Dy')
+ORDER BY date;
 ```
 
-### 5.2 Report Queries
-
-#### 5.2.1 Get Summary Report
 ```sql
--- ดึงรายงานสรุปแยกตามวันที่และโดเมน
+-- มุมมองรายเดือน (4 สัปดาห์ล่าสุด)
+-- ใช้สำหรับ: EmailChart component เมื่อเลือกโหมด "monthly"
 SELECT 
-    drs.report_date,
-    drs.domain,
-    drs.success_count,
-    drs.block_count,
-    drs.reject_count,
-    drs.total_sent,
-    drs.success_rate
-FROM daily_report_summary drs
-WHERE drs.report_date BETWEEN $1 AND $2
-ORDER BY drs.report_date DESC, drs.domain
-LIMIT $3 OFFSET $4;
+    DATE_TRUNC('week', sent_date) as week_start,
+    'สัปดาห์ ' || EXTRACT(WEEK FROM sent_date) as week_label,
+    COUNT(*) as sending,
+    SUM(CASE WHEN status = 'success' THEN 1 ELSE 0 END) as success,
+    SUM(CASE WHEN status = 'block' THEN 1 ELSE 0 END) as block,
+    SUM(CASE WHEN status = 'reject' THEN 1 ELSE 0 END) as reject
+FROM email_activities
+WHERE sent_date >= CURRENT_DATE - INTERVAL '4 weeks'
+GROUP BY DATE_TRUNC('week', sent_date), EXTRACT(WEEK FROM sent_date)
+ORDER BY week_start;
 ```
 
-#### 5.2.2 Get Blocked Recipients Detail
+**Response (Weekly):**
+```json
+[
+  { "date": "2025-10-08", "day_name": "จ", "sending": 2100, "success": 2000, "block": 60, "reject": 40 },
+  { "date": "2025-10-09", "day_name": "อ", "sending": 2300, "success": 2200, "block": 65, "reject": 35 }
+]
+```
+
+---
+
+### 5.1.3 Time Distribution Chart (Line Chart)
 ```sql
--- ดึงรายละเอียดผู้รับที่ถูกบล็อก
+-- แสดงการกระจายของการส่งอีเมลตามช่วงเวลา (แบ่งทุก 3 ชั่วโมง)
+-- ใช้สำหรับ: TimeDistributionChart component
 SELECT 
-    ef.recipient_email,
-    ef.failure_reason,
-    ef.failure_type,
-    ef.occurred_at,
-    ea.sender_email
-FROM email_failures ef
-JOIN email_activities ea ON ef.activity_id = ea.id
-JOIN email_recipients er ON er.activity_id = ea.id 
-    AND er.recipient_email = ef.recipient_email
-WHERE DATE(ea.sent_at) = $1
-    AND er.domain = $2
-    AND ef.failure_type IN ('spam', 'block')
-ORDER BY ef.occurred_at DESC
-LIMIT $3 OFFSET $4;
+    CASE 
+        WHEN EXTRACT(HOUR FROM sent_date) BETWEEN 0 AND 2 THEN '00:00-03:00'
+        WHEN EXTRACT(HOUR FROM sent_date) BETWEEN 3 AND 5 THEN '03:00-06:00'
+        WHEN EXTRACT(HOUR FROM sent_date) BETWEEN 6 AND 8 THEN '06:00-09:00'
+        WHEN EXTRACT(HOUR FROM sent_date) BETWEEN 9 AND 11 THEN '09:00-12:00'
+        WHEN EXTRACT(HOUR FROM sent_date) BETWEEN 12 AND 14 THEN '12:00-15:00'
+        WHEN EXTRACT(HOUR FROM sent_date) BETWEEN 15 AND 17 THEN '15:00-18:00'
+        WHEN EXTRACT(HOUR FROM sent_date) BETWEEN 18 AND 20 THEN '18:00-21:00'
+        ELSE '21:00-24:00'
+    END as time_range,
+    COUNT(*) as count
+FROM email_activities
+WHERE sent_date BETWEEN $1 AND $2
+GROUP BY time_range
+ORDER BY MIN(EXTRACT(HOUR FROM sent_date));
 ```
 
-### 5.3 Activity Queries
+**Parameters:**
+- `$1`: วันที่เริ่มต้น (YYYY-MM-DD HH:MM:SS)
+- `$2`: วันที่สิ้นสุด (YYYY-MM-DD HH:MM:SS)
 
-#### 5.3.1 Get Activity List
+**Response:**
+```json
+[
+  { "time_range": "00:00-03:00", "count": 324 },
+  { "time_range": "03:00-06:00", "count": 156 },
+  { "time_range": "06:00-09:00", "count": 1823 }
+]
+```
+
+---
+
+### 5.1.4 Top Failure Reasons Table
 ```sql
--- ดึงรายการ Activity พร้อมการกรองและ pagination
+-- แสดง Top 5 domains ที่มีปัญหาการส่งอีเมลมากที่สุด
+-- ใช้สำหรับ: TopFailureTable component
+SELECT 
+    er.recipient_domain as destination,
+    COUNT(*) as failures
+FROM email_recipients er
+JOIN email_activities ea ON er.activity_id = ea.id
+WHERE er.status IN ('block', 'reject')
+  AND ea.sent_date BETWEEN $1 AND $2
+GROUP BY er.recipient_domain
+ORDER BY failures DESC
+LIMIT 5;
+```
+
+**Parameters:**
+- `$1`: วันที่เริ่มต้น
+- `$2`: วันที่สิ้นสุด
+
+**Response:**
+```json
+[
+  { "destination": "gmail.com", "failures": 145 },
+  { "destination": "yahoo.com", "failures": 98 },
+  { "destination": "hotmail.com", "failures": 87 }
+]
+```
+
+---
+
+## 5.2 หน้า Summary Report (Report)
+
+### 5.2.1 Report List with Pagination and Search
+```sql
+-- แสดงรายการรายงานสรุปรายวัน พร้อม pagination และการค้นหา
+-- ใช้สำหรับ: หน้า Report (ตารางรายการรายงาน)
+SELECT 
+    r.id,
+    r.report_date,
+    r.total_sending,
+    r.total_success,
+    r.total_block,
+    r.total_reject,
+    r.success_rate,
+    r.created_at
+FROM daily_report_summary r
+WHERE 
+    ($1::varchar IS NULL OR 
+     TO_CHAR(r.report_date, 'YYYY-MM-DD') ILIKE '%' || $1 || '%')
+ORDER BY r.report_date DESC
+LIMIT $2 OFFSET $3;
+
+-- นับจำนวนรายการทั้งหมดสำหรับ pagination
+SELECT COUNT(*) as total
+FROM daily_report_summary
+WHERE ($1::varchar IS NULL OR 
+       TO_CHAR(report_date, 'YYYY-MM-DD') ILIKE '%' || $1 || '%');
+```
+
+**Parameters:**
+- `$1`: คำค้นหา (optional)
+- `$2`: จำนวนรายการต่อหน้า (เช่น 10, 20, 50)
+- `$3`: จำนวนรายการที่ข้ามไป (page_size * (page_number - 1))
+
+**Response:**
+```json
+{
+  "data": [
+    {
+      "id": 1,
+      "report_date": "2025-10-14",
+      "total_sending": 15234,
+      "total_success": 14567,
+      "total_block": 423,
+      "total_reject": 244,
+      "success_rate": 95.62,
+      "created_at": "2025-10-15T01:00:00Z"
+    }
+  ],
+  "total": 150
+}
+```
+
+---
+
+## 5.3 หน้า Report Details (ReportDetails)
+
+### 5.3.1 Report Details - Blocked Recipients List
+```sql
+-- แสดงรายการอีเมลที่ถูก Block ในวันที่เลือก พร้อม pagination
+-- ใช้สำหรับ: หน้า ReportDetails (ตารางรายละเอียด)
+SELECT 
+    er.id,
+    er.recipient_email,
+    er.recipient_domain,
+    er.status,
+    er.bounce_type,
+    er.bounce_reason,
+    ea.sender_email,
+    ea.subject,
+    ea.sent_date
+FROM email_recipients er
+JOIN email_activities ea ON er.activity_id = ea.id
+WHERE ea.sent_date::date = $1::date
+  AND er.status = 'block'
+ORDER BY ea.sent_date DESC
+LIMIT $2 OFFSET $3;
+
+-- นับจำนวนทั้งหมด
+SELECT COUNT(*) as total
+FROM email_recipients er
+JOIN email_activities ea ON er.activity_id = ea.id
+WHERE ea.sent_date::date = $1::date
+  AND er.status = 'block';
+```
+
+**Parameters:**
+- `$1`: วันที่ของรายงาน (YYYY-MM-DD)
+- `$2`: จำนวนรายการต่อหน้า
+- `$3`: (page_size * (page_number - 1))
+
+**Response:**
+```json
+{
+  "data": [
+    {
+      "id": 1,
+      "recipient_email": "user@example.com",
+      "recipient_domain": "example.com",
+      "status": "block",
+      "bounce_type": "hard",
+      "bounce_reason": "Mailbox does not exist",
+      "sender_email": "noreply@mycompany.com",
+      "subject": "Welcome Email",
+      "sent_date": "2025-10-14T09:30:00Z"
+    }
+  ],
+  "total": 423
+}
+```
+
+---
+
+### 5.3.2 Export Report Blocked Recipients (Excel)
+```sql
+-- ดึงข้อมูลอีเมลที่ถูก Block ทั้งหมดสำหรับ Export เป็น Excel
+-- ใช้สำหรับ: ปุ่ม Export บนหน้า ReportDetails
+SELECT 
+    er.recipient_email as "Email",
+    ea.sender_email as "Sender",
+    ea.subject as "Subject",
+    er.bounce_type as "Bounce Type",
+    er.bounce_reason as "Reason",
+    TO_CHAR(ea.sent_date, 'YYYY-MM-DD HH24:MI:SS') as "Sent Date"
+FROM email_recipients er
+JOIN email_activities ea ON er.activity_id = ea.id
+WHERE ea.sent_date::date = $1::date
+  AND er.status = 'block'
+ORDER BY ea.sent_date DESC;
+```
+
+---
+
+## 5.4 หน้า Activity (Activity List)
+
+### 5.4.1 Activity List with Filters and Pagination
+```sql
+-- แสดงรายการ email activities พร้อมการกรอง และ pagination
+-- ใช้สำหรับ: หน้า Activity (ตารางกิจกรรม)
 SELECT 
     ea.id,
-    ea.sent_at,
     ea.sender_email,
+    ea.subject,
+    ea.sent_date,
     ea.status,
     ea.total_recipients,
     ea.success_count,
     ea.failed_count,
-    ea.subject,
-    ea.campaign_id
+    ROUND((ea.success_count::numeric / NULLIF(ea.total_recipients, 0)::numeric * 100), 2) as success_rate
 FROM email_activities ea
-WHERE 1=1
-    AND ($1::timestamp IS NULL OR ea.sent_at >= $1)
-    AND ($2::timestamp IS NULL OR ea.sent_at <= $2)
-    AND ($3::varchar IS NULL OR ea.sender_email ILIKE '%' || $3 || '%')
-    AND ($4::email_status IS NULL OR ea.status = $4)
-ORDER BY ea.sent_at DESC
-LIMIT $5 OFFSET $6;
+WHERE 
+    ($1::email_status IS NULL OR ea.status = $1)
+    AND ($2::varchar IS NULL OR ea.sender_email ILIKE '%' || $2 || '%')
+    AND ($3::varchar IS NULL OR ea.subject ILIKE '%' || $3 || '%')
+    AND ($4::timestamp IS NULL OR ea.sent_date >= $4)
+    AND ($5::timestamp IS NULL OR ea.sent_date <= $5)
+ORDER BY ea.sent_date DESC
+LIMIT $6 OFFSET $7;
+
+-- นับจำนวนทั้งหมด
+SELECT COUNT(*) as total
+FROM email_activities ea
+WHERE 
+    ($1::email_status IS NULL OR ea.status = $1)
+    AND ($2::varchar IS NULL OR ea.sender_email ILIKE '%' || $2 || '%')
+    AND ($3::varchar IS NULL OR ea.subject ILIKE '%' || $3 || '%')
+    AND ($4::timestamp IS NULL OR ea.sent_date >= $4)
+    AND ($5::timestamp IS NULL OR ea.sent_date <= $5);
 ```
 
-#### 5.3.2 Get Activity Failures
+**Parameters:**
+- `$1`: สถานะ (success, block, reject) - optional
+- `$2`: sender email สำหรับค้นหา - optional
+- `$3`: หัวข้ออีเมลสำหรับค้นหา - optional
+- `$4`: วันที่เริ่มต้น - optional
+- `$5`: วันที่สิ้นสุด - optional
+- `$6`: จำนวนรายการต่อหน้า
+- `$7`: (page_size * (page_number - 1))
+
+**Response:**
+```json
+{
+  "data": [
+    {
+      "id": 1,
+      "sender_email": "noreply@mycompany.com",
+      "subject": "Welcome Email",
+      "sent_date": "2025-10-14T09:30:00Z",
+      "status": "success",
+      "total_recipients": 100,
+      "success_count": 95,
+      "failed_count": 5,
+      "success_rate": 95.00
+    }
+  ],
+  "total": 1523
+}
+```
+
+---
+
+## 5.5 หน้า Activity Details (ActivityDetails)
+
+### 5.5.1 Activity Details - Failed Recipients List
 ```sql
--- ดึงรายการที่ส่งไม่สำเร็จของ Activity
+-- แสดงรายการผู้รับที่ล้มเหลว (Block + Reject) สำหรับ activity เดียว
+-- ใช้สำหรับ: หน้า ActivityDetails (ตารางรายละเอียดผู้รับที่ล้มเหลว)
 SELECT 
-    ef.recipient_email,
-    ef.failure_reason,
-    ef.failure_type,
-    ef.error_code,
-    ef.occurred_at
-FROM email_failures ef
-WHERE ef.activity_id = $1
-ORDER BY ef.occurred_at DESC
+    er.id,
+    er.recipient_email,
+    er.recipient_domain,
+    er.status,
+    er.bounce_type,
+    er.bounce_reason,
+    er.sent_at,
+    er.bounced_at
+FROM email_recipients er
+WHERE er.activity_id = $1
+  AND er.status IN ('block', 'reject')
+ORDER BY er.sent_at DESC
 LIMIT $2 OFFSET $3;
+
+-- นับจำนวนทั้งหมด
+SELECT COUNT(*) as total
+FROM email_recipients er
+WHERE er.activity_id = $1
+  AND er.status IN ('block', 'reject');
 ```
 
-#### 5.3.3 Search by Receiver Email
-```sql
--- ค้นหา Activity จากอีเมลผู้รับ
-SELECT DISTINCT
-    ea.id,
-    ea.sent_at,
-    ea.sender_email,
-    ea.status,
-    ea.total_recipients,
-    ea.success_count,
-    ea.failed_count
-FROM email_activities ea
-JOIN email_recipients er ON er.activity_id = ea.id
-WHERE er.recipient_email ILIKE '%' || $1 || '%'
-    AND ($2::timestamp IS NULL OR ea.sent_at >= $2)
-    AND ($3::timestamp IS NULL OR ea.sent_at <= $3)
-ORDER BY ea.sent_at DESC
-LIMIT $4 OFFSET $5;
+**Parameters:**
+- `$1`: ID ของ email activity
+- `$2`: จำนวนรายการต่อหน้า
+- `$3`: (page_size * (page_number - 1))
+
+**Response:**
+```json
+{
+  "data": [
+    {
+      "id": 1,
+      "recipient_email": "user@example.com",
+      "recipient_domain": "example.com",
+      "status": "block",
+      "bounce_type": "hard",
+      "bounce_reason": "Mailbox does not exist",
+      "sent_at": "2025-10-14T09:30:00Z",
+      "bounced_at": "2025-10-14T09:30:15Z"
+    }
+  ],
+  "total": 5
+}
 ```
 
-### 5.4 Analytics Queries
+---
 
-#### 5.4.1 Domain Performance Analysis
+### 5.5.2 Export Activity Failed Recipients (Excel)
 ```sql
--- วิเคราะห์ประสิทธิภาพการส่งแยกตามโดเมน
+-- ดึงข้อมูลผู้รับที่ล้มเหลวทั้งหมดสำหรับ Export เป็น Excel
+-- ใช้สำหรับ: ปุ่ม Export บนหน้า ActivityDetails
 SELECT 
-    er.domain,
+    er.recipient_email as "Email",
+    er.recipient_domain as "Domain",
+    CASE er.status
+        WHEN 'block' THEN 'Block'
+        WHEN 'reject' THEN 'Reject'
+    END as "Status",
+    er.bounce_type as "Bounce Type",
+    er.bounce_reason as "Reason",
+    TO_CHAR(er.sent_at, 'YYYY-MM-DD HH24:MI:SS') as "Sent At",
+    TO_CHAR(er.bounced_at, 'YYYY-MM-DD HH24:MI:SS') as "Bounced At"
+FROM email_recipients er
+WHERE er.activity_id = $1
+  AND er.status IN ('block', 'reject')
+ORDER BY er.sent_at DESC;
+```
+
+---
+
+## 5.6 Analytics Queries (เพิ่มเติม)
+
+### 5.6.1 Domain Performance Analysis
+```sql
+-- วิเคราะห์ประสิทธิภาพการส่งอีเมลแยกตาม Domain ของผู้รับ
+SELECT 
+    er.recipient_domain,
     COUNT(*) as total_sent,
     SUM(CASE WHEN er.status = 'success' THEN 1 ELSE 0 END) as success_count,
-    SUM(CASE WHEN er.status IN ('block', 'reject') THEN 1 ELSE 0 END) as failed_count,
-    ROUND(
-        (SUM(CASE WHEN er.status = 'success' THEN 1 ELSE 0 END)::DECIMAL / COUNT(*)::DECIMAL) * 100,
-        2
-    ) as success_rate
+    SUM(CASE WHEN er.status = 'block' THEN 1 ELSE 0 END) as block_count,
+    SUM(CASE WHEN er.status = 'reject' THEN 1 ELSE 0 END) as reject_count,
+    ROUND(SUM(CASE WHEN er.status = 'success' THEN 1 ELSE 0 END)::numeric / COUNT(*)::numeric * 100, 2) as success_rate
 FROM email_recipients er
 JOIN email_activities ea ON er.activity_id = ea.id
-WHERE ea.sent_at BETWEEN $1 AND $2
-GROUP BY er.domain
+WHERE ea.sent_date BETWEEN $1 AND $2
+GROUP BY er.recipient_domain
 ORDER BY total_sent DESC;
 ```
 
-#### 5.4.2 Sender Performance
+### 5.6.2 Sender Performance Analysis
 ```sql
--- วิเคราะห์ประสิทธิภาพการส่งแยกตามผู้ส่ง
+-- วิเคราะห์ประสิทธิภาพการส่งอีเมลแยกตาม Sender
 SELECT 
     ea.sender_email,
-    COUNT(*) as total_campaigns,
-    SUM(ea.total_recipients) as total_sent,
+    COUNT(*) as total_activities,
+    SUM(ea.total_recipients) as total_recipients,
     SUM(ea.success_count) as total_success,
     SUM(ea.failed_count) as total_failed,
-    ROUND(
-        (SUM(ea.success_count)::DECIMAL / NULLIF(SUM(ea.total_recipients), 0)::DECIMAL) * 100,
-        2
-    ) as success_rate
+    ROUND(SUM(ea.success_count)::numeric / NULLIF(SUM(ea.total_recipients), 0)::numeric * 100, 2) as success_rate
 FROM email_activities ea
-WHERE ea.sent_at BETWEEN $1 AND $2
+WHERE ea.sent_date BETWEEN $1 AND $2
 GROUP BY ea.sender_email
-ORDER BY total_sent DESC;
+ORDER BY total_activities DESC;
 ```
 
-### 5.5 Materialized Views (สำหรับ Performance)
+### 5.6.3 Materialized Views (สำหรับ Performance)
 
 #### 5.5.1 Daily Summary Materialized View
 ```sql
