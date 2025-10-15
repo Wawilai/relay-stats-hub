@@ -66,26 +66,24 @@ const ActivityDetails = () => {
   return (
     <Layout>
       <div className="space-y-6">
-        <div className="flex items-center gap-4">
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={() => navigate("/activity")}
-          >
-            <ArrowLeft className="h-4 w-4" />
-          </Button>
-          <div>
-            <h2 className="text-3xl font-bold">รายการที่ส่งไม่สำเร็จ</h2>
-            <p className="text-muted-foreground mt-1">
-              วันที่ส่ง: {activityData.date} | ผู้ส่ง: {activityData.sender} | สถานะ: {activityData.status}
-            </p>
-          </div>
-        </div>
-
         <Card>
           <CardHeader>
-            <div className="flex items-center justify-between">
-              <CardTitle>รายการอีเมลที่ส่งไม่สำเร็จ</CardTitle>
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-4">
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={() => navigate("/activity")}
+                >
+                  <ArrowLeft className="h-4 w-4" />
+                </Button>
+                <div>
+                  <CardTitle>รายการที่ส่งไม่สำเร็จ</CardTitle>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    วันที่ส่ง: {activityData.date} | ผู้ส่ง: {activityData.sender} | สถานะ: {activityData.status}
+                  </p>
+                </div>
+              </div>
               <Button onClick={handleExport} variant="outline" size="sm">
                 <Download className="mr-2 h-4 w-4" />
                 Export Excel
