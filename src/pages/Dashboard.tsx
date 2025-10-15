@@ -64,10 +64,7 @@ const Dashboard = () => {
         <div className="flex items-center justify-between">
           <h2 className="text-3xl font-bold">Dashboard</h2>
           <div className="flex gap-2">
-            <Button
-              variant={viewMode === "weekly" ? "default" : "outline"}
-              onClick={() => setViewMode("weekly")}
-            >
+            <Button variant={viewMode === "weekly" ? "default" : "outline"} onClick={() => setViewMode("weekly")}>
               รายสัปดาห์
             </Button>
             <Button
@@ -80,24 +77,9 @@ const Dashboard = () => {
         </div>
 
         <div className="grid gap-4 md:grid-cols-3 lg:grid-cols-3">
-          <KPICard
-            title="Sending"
-            value={kpiData.sending}
-            icon={Mail}
-            variant="default"
-          />
-          <KPICard
-            title="Success"
-            value={kpiData.success}
-            icon={CheckCircle2}
-            variant="success"
-          />
-          <KPICard
-            title="Fail"
-            value={kpiData.fail}
-            icon={AlertCircle}
-            variant="destructive"
-          />
+          <KPICard title="Total" value={kpiData.sending} icon={Mail} variant="default" />
+          <KPICard title="Success" value={kpiData.success} icon={CheckCircle2} variant="success" />
+          <KPICard title="Fail" value={kpiData.fail} icon={AlertCircle} variant="destructive" />
         </div>
 
         <EmailChart data={chartData} />
