@@ -72,9 +72,9 @@ const ReportDetails = () => {
             <ArrowLeft className="h-4 w-4" />
           </Button>
           <div>
-            <h2 className="text-3xl font-bold">รายละเอียดรายการส่งล้มเหลว</h2>
+            <h2 className="text-3xl font-bold">รายละเอียดรายการส่งไม่สำเร็จ</h2>
             <p className="text-muted-foreground mt-1">
-              วันที่: {reportData.date} | โดเมน: {reportData.domain} | จำนวนบล็อก: {reportData.block} รายการ
+              วันที่: {reportData.date} | โดเมน: {reportData.domain} | จำนวนที่ไม่สำเร็จ: {reportData.block} รายการ
             </p>
           </div>
         </div>
@@ -82,7 +82,7 @@ const ReportDetails = () => {
         <Card>
           <CardHeader>
             <div className="flex items-center justify-between">
-              <CardTitle>รายการอีเมลที่ส่งล้มเหลว</CardTitle>
+              <CardTitle>รายการอีเมลที่ส่งไม่สำเร็จ</CardTitle>
               <Button onClick={handleExport} variant="outline" size="sm">
                 <Download className="mr-2 h-4 w-4" />
                 Export Excel

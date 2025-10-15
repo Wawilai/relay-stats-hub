@@ -332,7 +332,7 @@ const Report = () => {
                   <TableHead>วันที่ส่ง</TableHead>
                   <TableHead>โดเมนที่ส่ง</TableHead>
                   <TableHead className="text-right">ส่งสำเร็จ</TableHead>
-                  <TableHead className="text-right">ล้มเหลว</TableHead>
+                  <TableHead className="text-right">ส่งไม่สำเร็จ</TableHead>
                   <TableHead className="text-right">รายละเอียด</TableHead>
                 </TableRow>
               </TableHeader>
