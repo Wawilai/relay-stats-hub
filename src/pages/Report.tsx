@@ -19,6 +19,15 @@ import {
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 import { CalendarIcon, Download } from "lucide-react";
 import { format } from "date-fns";
 import { th } from "date-fns/locale";
@@ -28,41 +37,39 @@ import { useToast } from "@/hooks/use-toast";
 const Report = () => {
   const [date, setDate] = useState<Date>();
   const [filterType, setFilterType] = useState<"day" | "week" | "month">("day");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
   const { toast } = useToast();
 
-  // Mock report data
+  // Mock report data (expanded for pagination demo)
   const reportData = [
-    {
-      date: "2025-01-15",
-      domain: "gmail.com",
-      success: 2345,
-      block: 45,
-    },
-    {
-      date: "2025-01-15",
-      domain: "yahoo.com",
-      success: 1567,
-      block: 32,
-    },
-    {
-      date: "2025-01-15",
-      domain: "hotmail.com",
-      success: 987,
-      block: 23,
-    },
-    {
-      date: "2025-01-14",
-      domain: "gmail.com",
-      success: 2100,
-      block: 38,
-    },
-    {
-      date: "2025-01-14",
-      domain: "outlook.com",
-      success: 1234,
-      block: 28,
-    },
+    { date: "2025-01-15", domain: "gmail.com", success: 2345, block: 45 },
+    { date: "2025-01-15", domain: "yahoo.com", success: 1567, block: 32 },
+    { date: "2025-01-15", domain: "hotmail.com", success: 987, block: 23 },
+    { date: "2025-01-15", domain: "outlook.com", success: 1823, block: 38 },
+    { date: "2025-01-15", domain: "aol.com", success: 756, block: 15 },
+    { date: "2025-01-14", domain: "gmail.com", success: 2100, block: 38 },
+    { date: "2025-01-14", domain: "outlook.com", success: 1234, block: 28 },
+    { date: "2025-01-14", domain: "yahoo.com", success: 1432, block: 25 },
+    { date: "2025-01-14", domain: "hotmail.com", success: 923, block: 19 },
+    { date: "2025-01-14", domain: "protonmail.com", success: 567, block: 12 },
+    { date: "2025-01-13", domain: "gmail.com", success: 2234, block: 42 },
+    { date: "2025-01-13", domain: "yahoo.com", success: 1654, block: 31 },
+    { date: "2025-01-13", domain: "outlook.com", success: 1456, block: 27 },
+    { date: "2025-01-13", domain: "icloud.com", success: 834, block: 16 },
+    { date: "2025-01-13", domain: "zoho.com", success: 445, block: 9 },
+    { date: "2025-01-12", domain: "gmail.com", success: 2456, block: 48 },
+    { date: "2025-01-12", domain: "hotmail.com", success: 1123, block: 24 },
+    { date: "2025-01-12", domain: "yahoo.com", success: 1534, block: 29 },
+    { date: "2025-01-12", domain: "outlook.com", success: 1345, block: 26 },
+    { date: "2025-01-12", domain: "gmx.com", success: 623, block: 13 },
   ];
+
+  // Pagination calculations
+  const totalPages = Math.ceil(reportData.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedData = reportData.slice(startIndex, endIndex);
 
   const handleExport = () => {
     try {
@@ -167,7 +174,7 @@ const Report = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {reportData.map((item, index) => (
+                {paginatedData.map((item, index) => (
                   <TableRow key={index}>
                     <TableCell>{item.date}</TableCell>
                     <TableCell className="font-medium">{item.domain}</TableCell>
@@ -181,6 +188,41 @@ const Report = () => {
                 ))}
               </TableBody>
             </Table>
+            
+            <div className="mt-4 flex items-center justify-between">
+              <p className="text-sm text-muted-foreground">
+                แสดง {startIndex + 1} - {Math.min(endIndex, reportData.length)} จาก {reportData.length} รายการ
+              </p>
+              <Pagination>
+                <PaginationContent>
+                  <PaginationItem>
+                    <PaginationPrevious 
+                      onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                      className={currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                    />
+                  </PaginationItem>
+                  
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                    <PaginationItem key={page}>
+                      <PaginationLink
+                        onClick={() => setCurrentPage(page)}
+                        isActive={currentPage === page}
+                        className="cursor-pointer"
+                      >
+                        {page}
+                      </PaginationLink>
+                    </PaginationItem>
+                  ))}
+                  
+                  <PaginationItem>
+                    <PaginationNext 
+                      onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                      className={currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                    />
+                  </PaginationItem>
+                </PaginationContent>
+              </Pagination>
+            </div>
           </CardContent>
         </Card>
       </div>
