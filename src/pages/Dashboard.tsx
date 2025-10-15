@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Mail, CheckCircle2, ShieldAlert, XCircle } from "lucide-react";
 
 const Dashboard = () => {
-  const [viewMode, setViewMode] = useState<"weekly" | "monthly">("weekly");
+  const [viewMode, setViewMode] = useState<"weekly" | "last30days">("weekly");
 
   // Mock data for KPIs
   const kpiData = {
@@ -29,7 +29,7 @@ const Dashboard = () => {
     { date: "อา", sending: 1834, success: 1767, block: 55, reject: 12 },
   ];
 
-  const monthlyData = [
+  const last30DaysData = [
     { date: "สัปดาห์ 1", sending: 14000, success: 13400, block: 380, reject: 220 },
     { date: "สัปดาห์ 2", sending: 15234, success: 14567, block: 423, reject: 244 },
     { date: "สัปดาห์ 3", sending: 16500, success: 15800, block: 450, reject: 250 },
@@ -57,7 +57,7 @@ const Dashboard = () => {
     { destination: "example.com", failures: 54 },
   ];
 
-  const chartData = viewMode === "weekly" ? weeklyData : monthlyData;
+  const chartData = viewMode === "weekly" ? weeklyData : last30DaysData;
 
   return (
     <Layout>
@@ -72,10 +72,10 @@ const Dashboard = () => {
               รายสัปดาห์
             </Button>
             <Button
-              variant={viewMode === "monthly" ? "default" : "outline"}
-              onClick={() => setViewMode("monthly")}
+              variant={viewMode === "last30days" ? "default" : "outline"}
+              onClick={() => setViewMode("last30days")}
             >
-              รายเดือน
+              ย้อนหลัง 30 วัน
             </Button>
           </div>
         </div>
