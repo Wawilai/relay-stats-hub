@@ -2,6 +2,13 @@ import { useState } from "react";
 import Layout from "@/components/Layout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
   Table,
   TableBody,
   TableCell,
@@ -42,31 +49,77 @@ const Report = () => {
   const [endTime, setEndTime] = useState("23:59");
   const [filterType, setFilterType] = useState<"day" | "week" | "month">("day");
   const [currentPage, setCurrentPage] = useState(1);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [selectedReport, setSelectedReport] = useState<any>(null);
   const itemsPerPage = 10;
   const { toast } = useToast();
 
   // Mock report data (expanded for pagination demo)
   const reportData = [
-    { date: "2025-01-15", domain: "gmail.com", success: 2345, block: 45 },
-    { date: "2025-01-15", domain: "yahoo.com", success: 1567, block: 32 },
-    { date: "2025-01-15", domain: "hotmail.com", success: 987, block: 23 },
-    { date: "2025-01-15", domain: "outlook.com", success: 1823, block: 38 },
-    { date: "2025-01-15", domain: "aol.com", success: 756, block: 15 },
-    { date: "2025-01-14", domain: "gmail.com", success: 2100, block: 38 },
-    { date: "2025-01-14", domain: "outlook.com", success: 1234, block: 28 },
-    { date: "2025-01-14", domain: "yahoo.com", success: 1432, block: 25 },
-    { date: "2025-01-14", domain: "hotmail.com", success: 923, block: 19 },
-    { date: "2025-01-14", domain: "protonmail.com", success: 567, block: 12 },
-    { date: "2025-01-13", domain: "gmail.com", success: 2234, block: 42 },
-    { date: "2025-01-13", domain: "yahoo.com", success: 1654, block: 31 },
-    { date: "2025-01-13", domain: "outlook.com", success: 1456, block: 27 },
-    { date: "2025-01-13", domain: "icloud.com", success: 834, block: 16 },
-    { date: "2025-01-13", domain: "zoho.com", success: 445, block: 9 },
-    { date: "2025-01-12", domain: "gmail.com", success: 2456, block: 48 },
-    { date: "2025-01-12", domain: "hotmail.com", success: 1123, block: 24 },
-    { date: "2025-01-12", domain: "yahoo.com", success: 1534, block: 29 },
-    { date: "2025-01-12", domain: "outlook.com", success: 1345, block: 26 },
-    { date: "2025-01-12", domain: "gmx.com", success: 623, block: 13 },
+    { date: "2025-01-15", domain: "gmail.com", success: 2345, block: 45, blockedRecipients: [
+      { email: "user1@gmail.com", reason: "Spam filter" },
+      { email: "user2@gmail.com", reason: "Invalid recipient" },
+      { email: "user3@gmail.com", reason: "Mailbox full" },
+    ]},
+    { date: "2025-01-15", domain: "yahoo.com", success: 1567, block: 32, blockedRecipients: [
+      { email: "test@yahoo.com", reason: "Blocked by recipient" },
+      { email: "admin@yahoo.com", reason: "Policy violation" },
+    ]},
+    { date: "2025-01-15", domain: "hotmail.com", success: 987, block: 23, blockedRecipients: [
+      { email: "info@hotmail.com", reason: "Spam filter" },
+    ]},
+    { date: "2025-01-15", domain: "outlook.com", success: 1823, block: 38, blockedRecipients: [
+      { email: "contact@outlook.com", reason: "Rate limit exceeded" },
+      { email: "support@outlook.com", reason: "Suspicious content" },
+    ]},
+    { date: "2025-01-15", domain: "aol.com", success: 756, block: 15, blockedRecipients: [
+      { email: "user@aol.com", reason: "Blacklisted sender" },
+    ]},
+    { date: "2025-01-14", domain: "gmail.com", success: 2100, block: 38, blockedRecipients: [
+      { email: "blocked1@gmail.com", reason: "Spam filter" },
+    ]},
+    { date: "2025-01-14", domain: "outlook.com", success: 1234, block: 28, blockedRecipients: [
+      { email: "test@outlook.com", reason: "Invalid recipient" },
+    ]},
+    { date: "2025-01-14", domain: "yahoo.com", success: 1432, block: 25, blockedRecipients: [
+      { email: "sample@yahoo.com", reason: "Mailbox full" },
+    ]},
+    { date: "2025-01-14", domain: "hotmail.com", success: 923, block: 19, blockedRecipients: [
+      { email: "demo@hotmail.com", reason: "Policy violation" },
+    ]},
+    { date: "2025-01-14", domain: "protonmail.com", success: 567, block: 12, blockedRecipients: [
+      { email: "user@protonmail.com", reason: "Spam filter" },
+    ]},
+    { date: "2025-01-13", domain: "gmail.com", success: 2234, block: 42, blockedRecipients: [
+      { email: "blocked2@gmail.com", reason: "Rate limit exceeded" },
+    ]},
+    { date: "2025-01-13", domain: "yahoo.com", success: 1654, block: 31, blockedRecipients: [
+      { email: "test2@yahoo.com", reason: "Suspicious content" },
+    ]},
+    { date: "2025-01-13", domain: "outlook.com", success: 1456, block: 27, blockedRecipients: [
+      { email: "admin2@outlook.com", reason: "Blacklisted sender" },
+    ]},
+    { date: "2025-01-13", domain: "icloud.com", success: 834, block: 16, blockedRecipients: [
+      { email: "user@icloud.com", reason: "Spam filter" },
+    ]},
+    { date: "2025-01-13", domain: "zoho.com", success: 445, block: 9, blockedRecipients: [
+      { email: "contact@zoho.com", reason: "Invalid recipient" },
+    ]},
+    { date: "2025-01-12", domain: "gmail.com", success: 2456, block: 48, blockedRecipients: [
+      { email: "blocked3@gmail.com", reason: "Mailbox full" },
+    ]},
+    { date: "2025-01-12", domain: "hotmail.com", success: 1123, block: 24, blockedRecipients: [
+      { email: "test3@hotmail.com", reason: "Policy violation" },
+    ]},
+    { date: "2025-01-12", domain: "yahoo.com", success: 1534, block: 29, blockedRecipients: [
+      { email: "demo2@yahoo.com", reason: "Spam filter" },
+    ]},
+    { date: "2025-01-12", domain: "outlook.com", success: 1345, block: 26, blockedRecipients: [
+      { email: "support2@outlook.com", reason: "Rate limit exceeded" },
+    ]},
+    { date: "2025-01-12", domain: "gmx.com", success: 623, block: 13, blockedRecipients: [
+      { email: "user@gmx.com", reason: "Suspicious content" },
+    ]},
   ];
 
   // Pagination calculations
@@ -74,6 +127,11 @@ const Report = () => {
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
   const paginatedData = reportData.slice(startIndex, endIndex);
+
+  const handleViewDetails = (report: any) => {
+    setSelectedReport(report);
+    setIsDialogOpen(true);
+  };
 
   const handleExport = () => {
     try {
@@ -209,6 +267,7 @@ const Report = () => {
                   <TableHead>โดเมนที่ส่ง</TableHead>
                   <TableHead className="text-right">ส่งสำเร็จ</TableHead>
                   <TableHead className="text-right">บล็อก</TableHead>
+                  <TableHead className="text-right">รายละเอียด</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -221,6 +280,17 @@ const Report = () => {
                     </TableCell>
                     <TableCell className="text-right text-destructive font-semibold">
                       {item.block.toLocaleString()}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      {item.block > 0 && (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleViewDetails(item)}
+                        >
+                          ดูรายละเอียด
+                        </Button>
+                      )}
                     </TableCell>
                   </TableRow>
                 ))}
@@ -263,6 +333,43 @@ const Report = () => {
             </div>
           </CardContent>
         </Card>
+
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+          <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle>รายละเอียดรายการบล็อก</DialogTitle>
+              <DialogDescription>
+                {selectedReport && (
+                  <>
+                    วันที่: {selectedReport.date} | โดเมน: {selectedReport.domain} | จำนวนบล็อก: {selectedReport.block} รายการ
+                  </>
+                )}
+              </DialogDescription>
+            </DialogHeader>
+            <div className="mt-4">
+              {selectedReport?.blockedRecipients && selectedReport.blockedRecipients.length > 0 ? (
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>อีเมลผู้รับ</TableHead>
+                      <TableHead>สาเหตุ</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {selectedReport.blockedRecipients.map((recipient: any, idx: number) => (
+                      <TableRow key={idx}>
+                        <TableCell className="font-medium">{recipient.email}</TableCell>
+                        <TableCell className="text-muted-foreground">{recipient.reason}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              ) : (
+                <p className="text-center text-muted-foreground py-4">ไม่มีข้อมูลรายการบล็อก</p>
+              )}
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
     </Layout>
   );
