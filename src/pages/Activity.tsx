@@ -372,9 +372,6 @@ const Activity = () => {
                     <TableHead>วันที่ส่ง</TableHead>
                     <TableHead>ผู้ส่ง</TableHead>
                     <TableHead>สถานะ</TableHead>
-                    <TableHead className="text-right">ทั้งหมด</TableHead>
-                    <TableHead className="text-right">ล้มเหลว</TableHead>
-                    <TableHead className="text-right">สำเร็จ</TableHead>
                     <TableHead className="text-center">รายละเอียด</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -398,15 +395,6 @@ const Activity = () => {
                           >
                             {item.status}
                           </span>
-                        </TableCell>
-                        <TableCell className="text-right font-semibold">
-                          {item.total.toLocaleString()}
-                        </TableCell>
-                        <TableCell className="text-right text-destructive font-semibold">
-                          {item.failed.toLocaleString()}
-                        </TableCell>
-                        <TableCell className="text-right text-success font-semibold">
-                          {item.success.toLocaleString()}
                         </TableCell>
                         <TableCell className="text-center">
                           {hasFailures && (
