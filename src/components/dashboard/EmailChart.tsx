@@ -20,16 +20,9 @@ const EmailChart = ({ data }: EmailChartProps) => {
         <ResponsiveContainer width="100%" height={300}>
           <LineChart data={data}>
             <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
-            <XAxis 
-              dataKey="date" 
-              className="text-xs"
-              tick={{ fill: "hsl(var(--muted-foreground))" }}
-            />
-            <YAxis 
-              className="text-xs"
-              tick={{ fill: "hsl(var(--muted-foreground))" }}
-            />
-            <Tooltip 
+            <XAxis dataKey="date" className="text-xs" tick={{ fill: "hsl(var(--muted-foreground))" }} />
+            <YAxis className="text-xs" tick={{ fill: "hsl(var(--muted-foreground))" }} />
+            <Tooltip
               contentStyle={{
                 backgroundColor: "hsl(var(--card))",
                 border: "1px solid hsl(var(--border))",
@@ -37,27 +30,9 @@ const EmailChart = ({ data }: EmailChartProps) => {
               }}
             />
             <Legend />
-            <Line 
-              type="monotone" 
-              dataKey="sending" 
-              stroke="hsl(var(--chart-1))" 
-              strokeWidth={2}
-              name="Sending"
-            />
-            <Line 
-              type="monotone" 
-              dataKey="success" 
-              stroke="hsl(var(--chart-2))" 
-              strokeWidth={2}
-              name="Success"
-            />
-            <Line 
-              type="monotone" 
-              dataKey="fail" 
-              stroke="hsl(var(--chart-4))" 
-              strokeWidth={2}
-              name="Fail"
-            />
+            <Line type="monotone" dataKey="total" stroke="hsl(var(--chart-1))" strokeWidth={2} name="Sending" />
+            <Line type="monotone" dataKey="success" stroke="hsl(var(--chart-2))" strokeWidth={2} name="Success" />
+            <Line type="monotone" dataKey="fail" stroke="hsl(var(--chart-4))" strokeWidth={2} name="Fail" />
           </LineChart>
         </ResponsiveContainer>
       </CardContent>
