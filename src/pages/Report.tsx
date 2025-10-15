@@ -19,13 +19,16 @@ import {
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
-import { CalendarIcon } from "lucide-react";
+import { CalendarIcon, Download } from "lucide-react";
 import { format } from "date-fns";
 import { th } from "date-fns/locale";
+import * as XLSX from "xlsx";
+import { useToast } from "@/hooks/use-toast";
 
 const Report = () => {
   const [date, setDate] = useState<Date>();
   const [filterType, setFilterType] = useState<"day" | "week" | "month">("day");
+  const { toast } = useToast();
 
   // Mock report data
   const reportData = [
@@ -60,6 +63,42 @@ const Report = () => {
       block: 28,
     },
   ];
+
+  const handleExport = () => {
+    try {
+      // Prepare data for Excel
+      const exportData = reportData.map((item) => ({
+        "วันที่ส่ง": item.date,
+        "โดเมนที่ส่ง": item.domain,
+        "ส่งสำเร็จ": item.success,
+        "บล็อก": item.block,
+      }));
+
+      // Create worksheet
+      const worksheet = XLSX.utils.json_to_sheet(exportData);
+      
+      // Create workbook
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Summary Report");
+
+      // Generate filename with current date
+      const filename = `summary-report-${format(new Date(), "yyyy-MM-dd")}.xlsx`;
+
+      // Save file
+      XLSX.writeFile(workbook, filename);
+
+      toast({
+        title: "ส่งออกสำเร็จ",
+        description: `ไฟล์ ${filename} ถูกดาวน์โหลดเรียบร้อยแล้ว`,
+      });
+    } catch (error) {
+      toast({
+        title: "เกิดข้อผิดพลาด",
+        description: "ไม่สามารถส่งออกไฟล์ได้",
+        variant: "destructive",
+      });
+    }
+  };
 
   return (
     <Layout>
@@ -109,7 +148,13 @@ const Report = () => {
 
         <Card>
           <CardHeader>
-            <CardTitle>รายละเอียดการส่งอีเมล</CardTitle>
+            <div className="flex items-center justify-between">
+              <CardTitle>รายละเอียดการส่งอีเมล</CardTitle>
+              <Button onClick={handleExport} variant="outline" size="sm">
+                <Download className="mr-2 h-4 w-4" />
+                Export Excel
+              </Button>
+            </div>
           </CardHeader>
           <CardContent>
             <Table>
