@@ -343,27 +343,40 @@ const Activity = () => {
                   <TableRow>
                   <TableHead>วันที่ส่ง</TableHead>
                   <TableHead>ผู้ส่ง</TableHead>
+                  <TableHead>ผู้รับ</TableHead>
                   <TableHead>สถานะ</TableHead>
-                  </TableRow>
-                </TableHeader>
+                  <TableHead>สาเหตุ</TableHead>
+                </TableRow>
+              </TableHeader>
                 <TableBody>
-                {paginatedData.map((item, index) => (
-                  <TableRow key={index}>
-                    <TableCell className="whitespace-nowrap">{item.date}</TableCell>
-                    <TableCell className="font-medium">{item.sender}</TableCell>
-                    <TableCell>
-                      <span
-                        className={
-                          item.status === "Success"
-                            ? "text-success"
-                            : "text-destructive"
-                        }
-                      >
-                        {item.status}
-                      </span>
-                    </TableCell>
-                  </TableRow>
-                ))}
+                {paginatedData.map((item, index) => {
+                  const recipient = item.failedRecipients?.[0]?.email || "-";
+                  const reason = item.failedRecipients?.[0]?.reason || "-";
+                  
+                  return (
+                    <TableRow key={index}>
+                      <TableCell className="whitespace-nowrap">{item.date}</TableCell>
+                      <TableCell className="font-medium">{item.sender}</TableCell>
+                      <TableCell className="font-medium">
+                        {item.status === "Fail" ? recipient : "-"}
+                      </TableCell>
+                      <TableCell>
+                        <span
+                          className={
+                            item.status === "Success"
+                              ? "text-success"
+                              : "text-destructive"
+                          }
+                        >
+                          {item.status}
+                        </span>
+                      </TableCell>
+                      <TableCell className="text-muted-foreground">
+                        {item.status === "Fail" ? reason : "-"}
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
                 </TableBody>
               </Table>
             </div>
