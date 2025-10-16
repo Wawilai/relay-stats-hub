@@ -208,8 +208,9 @@ const Report = () => {
       const exportData = reportData.map((item) => ({
         วันที่ส่ง: item.date,
         โดเมนที่ส่ง: item.domain,
+        ทั้งหมด: item.success + item.block,
         ส่งสำเร็จ: item.success,
-        บล็อก: item.block,
+        ส่งไม่สำเร็จ: item.block,
       }));
 
       // Create worksheet
@@ -331,6 +332,7 @@ const Report = () => {
                 <TableRow>
                   <TableHead>วันที่ส่ง</TableHead>
                   <TableHead>โดเมนที่ส่ง</TableHead>
+                  <TableHead className="text-right">ทั้งหมด</TableHead>
                   <TableHead className="text-right">ส่งสำเร็จ</TableHead>
                   <TableHead className="text-right">ส่งไม่สำเร็จ</TableHead>
                   <TableHead className="text-right">รายละเอียด</TableHead>
@@ -341,6 +343,9 @@ const Report = () => {
                   <TableRow key={index}>
                     <TableCell>{item.date}</TableCell>
                     <TableCell className="font-medium">{item.domain}</TableCell>
+                    <TableCell className="text-right font-semibold">
+                      {(item.success + item.block).toLocaleString()}
+                    </TableCell>
                     <TableCell className="text-right text-success font-semibold">
                       {item.success.toLocaleString()}
                     </TableCell>
