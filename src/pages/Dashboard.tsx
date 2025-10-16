@@ -65,7 +65,7 @@ const Dashboard = () => {
           <h2 className="text-3xl font-bold">Dashboard</h2>
           <div className="flex gap-2">
             <Button variant={viewMode === "weekly" ? "default" : "outline"} onClick={() => setViewMode("weekly")}>
-              รายสัปดาห์
+              ย้อนหลัง 7 วัน
             </Button>
             <Button
               variant={viewMode === "last30days" ? "default" : "outline"}
