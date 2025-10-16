@@ -74,7 +74,7 @@ const ReportDetails = () => {
           <div>
             <h2 className="text-3xl font-bold">รายละเอียดรายการส่งไม่สำเร็จ</h2>
             <p className="text-muted-foreground mt-1">
-              วันที่: {reportData.date} | โดเมน: {reportData.domain} | จำนวนที่ไม่สำเร็จ: {reportData.block} รายการ
+              วันที่: {reportData.date} | โดเมน: {reportData.domain} | ทั้งหมด: {(reportData.success + reportData.block).toLocaleString()} | ส่งสำเร็จ: {reportData.success.toLocaleString()} | ส่งไม่สำเร็จ: {reportData.block.toLocaleString()} รายการ
             </p>
           </div>
         </div>
