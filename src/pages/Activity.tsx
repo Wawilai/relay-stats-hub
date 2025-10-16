@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import Layout from "@/components/Layout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -22,13 +21,12 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-import { CalendarIcon, Download, Eye } from "lucide-react";
+import { CalendarIcon, Download } from "lucide-react";
 import { format } from "date-fns";
 import { th } from "date-fns/locale";
 import { toast } from "sonner";
 
 const Activity = () => {
-  const navigate = useNavigate();
   const [startDate, setStartDate] = useState<Date>();
   const [endDate, setEndDate] = useState<Date>();
   const [startTime, setStartTime] = useState("00:00");
@@ -248,10 +246,6 @@ const Activity = () => {
     toast.success("กำลัง Export ข้อมูลเป็นไฟล์ Excel");
   };
 
-  const handleViewDetails = (item: any) => {
-    navigate("/activity/details", { state: { activityData: item } });
-  };
-
   return (
     <Layout>
       <div className="space-y-6">
@@ -347,47 +341,29 @@ const Activity = () => {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>วันที่ส่ง</TableHead>
-                    <TableHead>ผู้ส่ง</TableHead>
-                    <TableHead>สถานะ</TableHead>
-                    <TableHead className="text-center">รายละเอียด</TableHead>
+                  <TableHead>วันที่ส่ง</TableHead>
+                  <TableHead>ผู้ส่ง</TableHead>
+                  <TableHead>สถานะ</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {paginatedData.map((item, index) => {
-                    const hasFailures = item.failed > 0;
-
-                    return (
-                      <TableRow key={index}>
-                        <TableCell className="whitespace-nowrap">{item.date}</TableCell>
-                        <TableCell className="font-medium">{item.sender}</TableCell>
-                        <TableCell>
-                          <span
-                            className={
-                              item.status === "Success"
-                                ? "text-success"
-                                : "text-destructive"
-                            }
-                          >
-                            {item.status}
-                          </span>
-                        </TableCell>
-                        <TableCell className="text-center">
-                          {hasFailures && (
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => handleViewDetails(item)}
-                              className="gap-2"
-                            >
-                              <Eye className="h-4 w-4" />
-                              ดูรายละเอียด
-                            </Button>
-                          )}
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })}
+                {paginatedData.map((item, index) => (
+                  <TableRow key={index}>
+                    <TableCell className="whitespace-nowrap">{item.date}</TableCell>
+                    <TableCell className="font-medium">{item.sender}</TableCell>
+                    <TableCell>
+                      <span
+                        className={
+                          item.status === "Success"
+                            ? "text-success"
+                            : "text-destructive"
+                        }
+                      >
+                        {item.status}
+                      </span>
+                    </TableCell>
+                  </TableRow>
+                ))}
                 </TableBody>
               </Table>
             </div>
