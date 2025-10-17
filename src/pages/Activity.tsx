@@ -38,9 +38,9 @@ const Activity = () => {
       recipient: "team@example.com",
       status: "Processed",
       tag: "",
-      total: 150,
+      total: 15,
       failed: 0,
-      success: 150,
+      success: 15,
       failedRecipients: [],
     },
     {
@@ -115,9 +115,9 @@ const Activity = () => {
       recipient: "customer@shop.com",
       status: "Processed",
       tag: "",
-      total: 123,
+      total: 12,
       failed: 0,
-      success: 123,
+      success: 12,
       failedRecipients: [],
     },
     {
