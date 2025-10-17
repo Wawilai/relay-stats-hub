@@ -361,10 +361,10 @@ const Activity = () => {
               <Table>
                 <TableHeader>
                   <TableRow>
+                  <TableHead>สถานะ</TableHead>
                   <TableHead>วันที่ส่ง</TableHead>
                   <TableHead>ผู้ส่ง</TableHead>
                   <TableHead>ผู้รับ</TableHead>
-                  <TableHead>สถานะ</TableHead>
                   <TableHead>สาเหตุ</TableHead>
                 </TableRow>
               </TableHeader>
@@ -374,9 +374,6 @@ const Activity = () => {
                   
                   return (
                     <TableRow key={index}>
-                      <TableCell className="whitespace-nowrap">{item.date}</TableCell>
-                      <TableCell className="font-medium">{item.sender}</TableCell>
-                      <TableCell className="font-medium">{item.recipient}</TableCell>
                       <TableCell>
                         <span
                           className={
@@ -388,6 +385,9 @@ const Activity = () => {
                           {item.status}
                         </span>
                       </TableCell>
+                      <TableCell className="whitespace-nowrap">{item.date}</TableCell>
+                      <TableCell className="font-medium">{item.sender}</TableCell>
+                      <TableCell className="font-medium">{item.recipient}</TableCell>
                       <TableCell className="text-muted-foreground">
                         {item.status === "Fail" ? reason : "-"}
                       </TableCell>
