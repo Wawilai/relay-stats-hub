@@ -36,6 +36,7 @@ const Activity = () => {
       sender: "admin@company.com",
       recipient: "team@example.com",
       status: "Success",
+      tag: "",
       total: 150,
       failed: 0,
       success: 150,
@@ -46,6 +47,7 @@ const Activity = () => {
       sender: "marketing@company.com",
       recipient: "user1@domain.com",
       status: "Fail",
+      tag: "Error",
       total: 1,
       failed: 1,
       success: 0,
@@ -56,6 +58,7 @@ const Activity = () => {
       sender: "support@company.com",
       recipient: "client@business.com",
       status: "Success",
+      tag: "",
       total: 89,
       failed: 0,
       success: 89,
@@ -66,6 +69,7 @@ const Activity = () => {
       sender: "sales@company.com",
       recipient: "recipient1@email.com",
       status: "Fail",
+      tag: "Error",
       total: 1,
       failed: 1,
       success: 0,
@@ -76,6 +80,7 @@ const Activity = () => {
       sender: "hr@company.com",
       recipient: "staff@company.com",
       status: "Success",
+      tag: "",
       total: 234,
       failed: 0,
       success: 234,
@@ -86,6 +91,7 @@ const Activity = () => {
       sender: "admin@company.com",
       recipient: "spam1@test.com",
       status: "Fail",
+      tag: "Error",
       total: 1,
       failed: 1,
       success: 0,
@@ -96,6 +102,7 @@ const Activity = () => {
       sender: "marketing@company.com",
       recipient: "reject1@bounce.com",
       status: "Fail",
+      tag: "Error",
       total: 1,
       failed: 1,
       success: 0,
@@ -106,6 +113,7 @@ const Activity = () => {
       sender: "support@company.com",
       recipient: "customer@shop.com",
       status: "Success",
+      tag: "",
       total: 123,
       failed: 0,
       success: 123,
@@ -116,6 +124,7 @@ const Activity = () => {
       sender: "sales@company.com",
       recipient: "leads@prospect.com",
       status: "Success",
+      tag: "",
       total: 267,
       failed: 0,
       success: 267,
@@ -126,6 +135,7 @@ const Activity = () => {
       sender: "info@company.com",
       recipient: "blocked1@provider.com",
       status: "Fail",
+      tag: "Error",
       total: 1,
       failed: 1,
       success: 0,
@@ -136,6 +146,7 @@ const Activity = () => {
       sender: "admin@company.com",
       recipient: "users@platform.com",
       status: "Success",
+      tag: "",
       total: 156,
       failed: 0,
       success: 156,
@@ -146,6 +157,7 @@ const Activity = () => {
       sender: "marketing@company.com",
       recipient: "subscribers@newsletter.com",
       status: "Success",
+      tag: "",
       total: 298,
       failed: 0,
       success: 298,
@@ -156,6 +168,7 @@ const Activity = () => {
       sender: "support@company.com",
       recipient: "noreply@closed.com",
       status: "Fail",
+      tag: "Error",
       total: 1,
       failed: 1,
       success: 0,
@@ -166,6 +179,7 @@ const Activity = () => {
       sender: "sales@company.com",
       recipient: "contacts@enterprise.com",
       status: "Success",
+      tag: "",
       total: 334,
       failed: 0,
       success: 334,
@@ -176,6 +190,7 @@ const Activity = () => {
       sender: "hr@company.com",
       recipient: "employees@company.com",
       status: "Success",
+      tag: "",
       total: 145,
       failed: 0,
       success: 145,
@@ -186,6 +201,7 @@ const Activity = () => {
       sender: "admin@company.com",
       recipient: "all@company.com",
       status: "Success",
+      tag: "",
       total: 223,
       failed: 0,
       success: 223,
@@ -196,6 +212,7 @@ const Activity = () => {
       sender: "marketing@company.com",
       recipient: "protect1@domain.com",
       status: "Fail",
+      tag: "Error",
       total: 1,
       failed: 1,
       success: 0,
@@ -206,6 +223,7 @@ const Activity = () => {
       sender: "support@company.com",
       recipient: "help@customer.com",
       status: "Success",
+      tag: "",
       total: 167,
       failed: 0,
       success: 167,
@@ -216,6 +234,7 @@ const Activity = () => {
       sender: "sales@company.com",
       recipient: "buyers@market.com",
       status: "Success",
+      tag: "",
       total: 289,
       failed: 0,
       success: 289,
@@ -226,6 +245,7 @@ const Activity = () => {
       sender: "info@company.com",
       recipient: "dns@error.com",
       status: "Fail",
+      tag: "Error",
       total: 1,
       failed: 1,
       success: 0,
@@ -338,10 +358,11 @@ const Activity = () => {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Event</TableHead>
+                    <TableHead>สถานะ</TableHead>
                     <TableHead>Sender</TableHead>
                     <TableHead>Recipient</TableHead>
-                    <TableHead>สาเหตุ</TableHead>
+                    <TableHead>Tag</TableHead>
+                    <TableHead>Type</TableHead>
                     <TableHead>วันที่ส่ง</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -358,6 +379,11 @@ const Activity = () => {
                         </TableCell>
                         <TableCell className="font-medium">{item.sender}</TableCell>
                         <TableCell className="font-medium">{item.recipient}</TableCell>
+                        <TableCell>
+                          {item.tag && (
+                            <span className="text-destructive font-medium">{item.tag}</span>
+                          )}
+                        </TableCell>
                         <TableCell className="text-muted-foreground">{item.status === "Fail" ? reason : "-"}</TableCell>
                         <TableCell className="whitespace-nowrap">{item.date}</TableCell>
                       </TableRow>
