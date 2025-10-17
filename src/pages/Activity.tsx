@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import {
@@ -373,16 +374,18 @@ const Activity = () => {
                     return (
                       <TableRow key={index}>
                         <TableCell>
-                          <span className={`font-bold ${item.status === "Success" ? "text-success" : "text-destructive"}`}>
+                          <Badge variant={item.status === "Success" ? "default" : "destructive"}>
                             {item.status}
-                          </span>
+                          </Badge>
                         </TableCell>
                         <TableCell className="font-medium">{item.sender}</TableCell>
                         <TableCell className="font-medium">{item.recipient}</TableCell>
                         <TableCell>
-                          {item.tag && <span className="text-destructive font-bold">{item.tag}</span>}
+                          {item.tag && <Badge variant="destructive">{item.tag}</Badge>}
                         </TableCell>
-                        <TableCell className="font-bold">{item.status === "Fail" ? reason : "-"}</TableCell>
+                        <TableCell>
+                          {item.status === "Fail" ? <Badge variant="outline">{reason}</Badge> : "-"}
+                        </TableCell>
                         <TableCell className="whitespace-nowrap">{item.date}</TableCell>
                       </TableRow>
                     );
