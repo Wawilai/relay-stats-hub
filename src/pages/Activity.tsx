@@ -363,7 +363,7 @@ const Activity = () => {
                     <TableHead>Recipient</TableHead>
                     <TableHead>Tag</TableHead>
                     <TableHead>Type</TableHead>
-                    <TableHead>วันที่ส่ง</TableHead>
+                    <TableHead>Date & time</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -380,9 +380,7 @@ const Activity = () => {
                         <TableCell className="font-medium">{item.sender}</TableCell>
                         <TableCell className="font-medium">{item.recipient}</TableCell>
                         <TableCell>
-                          {item.tag && (
-                            <span className="text-destructive font-medium">{item.tag}</span>
-                          )}
+                          {item.tag && <span className="text-destructive font-medium">{item.tag}</span>}
                         </TableCell>
                         <TableCell className="text-muted-foreground">{item.status === "Fail" ? reason : "-"}</TableCell>
                         <TableCell className="whitespace-nowrap">{item.date}</TableCell>
