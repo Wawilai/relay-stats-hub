@@ -373,16 +373,16 @@ const Activity = () => {
                     return (
                       <TableRow key={index}>
                         <TableCell>
-                          <span className={item.status === "Success" ? "text-success" : "text-destructive"}>
+                          <span className={`font-bold ${item.status === "Success" ? "text-success" : "text-destructive"}`}>
                             {item.status}
                           </span>
                         </TableCell>
                         <TableCell className="font-medium">{item.sender}</TableCell>
                         <TableCell className="font-medium">{item.recipient}</TableCell>
                         <TableCell>
-                          {item.tag && <span className="text-destructive font-medium">{item.tag}</span>}
+                          {item.tag && <span className="text-destructive font-bold">{item.tag}</span>}
                         </TableCell>
-                        <TableCell className="text-muted-foreground">{item.status === "Fail" ? reason : "-"}</TableCell>
+                        <TableCell className="font-bold">{item.status === "Fail" ? reason : "-"}</TableCell>
                         <TableCell className="whitespace-nowrap">{item.date}</TableCell>
                       </TableRow>
                     );
