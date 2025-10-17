@@ -358,11 +358,11 @@ const Activity = () => {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Event</TableHead>
+                    <TableHead className="font-bold">Event</TableHead>
                     <TableHead>Sender</TableHead>
                     <TableHead>Recipient</TableHead>
-                    <TableHead>Tag</TableHead>
-                    <TableHead>Type</TableHead>
+                    <TableHead className="font-bold">Tag</TableHead>
+                    <TableHead className="font-bold">Type</TableHead>
                     <TableHead>Date & time</TableHead>
                   </TableRow>
                 </TableHeader>
