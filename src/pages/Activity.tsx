@@ -1,14 +1,7 @@
 import { useState } from "react";
 import Layout from "@/components/Layout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -38,221 +31,205 @@ const Activity = () => {
 
   // Mock activity data with failed recipients details
   const activityData = [
-    { 
-      date: "2025-01-15 14:23:45", 
-      sender: "admin@company.com", 
+    {
+      date: "2025-01-15 14:23:45",
+      sender: "admin@company.com",
       recipient: "team@example.com",
-      status: "Success", 
-      total: 150, 
-      failed: 0, 
+      status: "Success",
+      total: 150,
+      failed: 0,
       success: 150,
-      failedRecipients: []
+      failedRecipients: [],
     },
-    { 
-      date: "2025-01-15 13:15:22", 
-      sender: "marketing@company.com", 
+    {
+      date: "2025-01-15 13:15:22",
+      sender: "marketing@company.com",
       recipient: "user1@domain.com",
-      status: "Fail", 
-      total: 1, 
-      failed: 1, 
+      status: "Fail",
+      total: 1,
+      failed: 1,
       success: 0,
-      failedRecipients: [
-        { email: "user1@domain.com", reason: "Blocked by spam filter" }
-      ]
+      failedRecipients: [{ email: "user1@domain.com", reason: "Blocked by spam filter" }],
     },
-    { 
-      date: "2025-01-15 11:45:10", 
-      sender: "support@company.com", 
+    {
+      date: "2025-01-15 11:45:10",
+      sender: "support@company.com",
       recipient: "client@business.com",
-      status: "Success", 
-      total: 89, 
-      failed: 0, 
-      success: 89, 
-      failedRecipients: []
+      status: "Success",
+      total: 89,
+      failed: 0,
+      success: 89,
+      failedRecipients: [],
     },
-    { 
-      date: "2025-01-15 09:30:55", 
-      sender: "sales@company.com", 
+    {
+      date: "2025-01-15 09:30:55",
+      sender: "sales@company.com",
       recipient: "recipient1@email.com",
-      status: "Fail", 
-      total: 1, 
-      failed: 1, 
+      status: "Fail",
+      total: 1,
+      failed: 1,
       success: 0,
-      failedRecipients: [
-        { email: "recipient1@email.com", reason: "Recipient address rejected" }
-      ]
+      failedRecipients: [{ email: "recipient1@email.com", reason: "Recipient address rejected" }],
     },
-    { 
-      date: "2025-01-14 16:45:30", 
-      sender: "hr@company.com", 
+    {
+      date: "2025-01-14 16:45:30",
+      sender: "hr@company.com",
       recipient: "staff@company.com",
-      status: "Success", 
-      total: 234, 
-      failed: 0, 
+      status: "Success",
+      total: 234,
+      failed: 0,
       success: 234,
-      failedRecipients: []
+      failedRecipients: [],
     },
-    { 
-      date: "2025-01-14 15:20:18", 
-      sender: "admin@company.com", 
+    {
+      date: "2025-01-14 15:20:18",
+      sender: "admin@company.com",
       recipient: "spam1@test.com",
-      status: "Fail", 
-      total: 1, 
-      failed: 1, 
+      status: "Fail",
+      total: 1,
+      failed: 1,
       success: 0,
-      failedRecipients: [
-        { email: "spam1@test.com", reason: "Blocked by recipient's spam filter" }
-      ]
+      failedRecipients: [{ email: "spam1@test.com", reason: "Blocked by recipient's spam filter" }],
     },
-    { 
-      date: "2025-01-14 14:10:42", 
-      sender: "marketing@company.com", 
+    {
+      date: "2025-01-14 14:10:42",
+      sender: "marketing@company.com",
       recipient: "reject1@bounce.com",
-      status: "Fail", 
-      total: 1, 
-      failed: 1, 
+      status: "Fail",
+      total: 1,
+      failed: 1,
       success: 0,
-      failedRecipients: [
-        { email: "reject1@bounce.com", reason: "Permanent delivery failure" }
-      ]
+      failedRecipients: [{ email: "reject1@bounce.com", reason: "Permanent delivery failure" }],
     },
-    { 
-      date: "2025-01-14 12:35:15", 
-      sender: "support@company.com", 
+    {
+      date: "2025-01-14 12:35:15",
+      sender: "support@company.com",
       recipient: "customer@shop.com",
-      status: "Success", 
-      total: 123, 
-      failed: 0, 
+      status: "Success",
+      total: 123,
+      failed: 0,
       success: 123,
-      failedRecipients: []
+      failedRecipients: [],
     },
-    { 
-      date: "2025-01-14 10:50:33", 
-      sender: "sales@company.com", 
+    {
+      date: "2025-01-14 10:50:33",
+      sender: "sales@company.com",
       recipient: "leads@prospect.com",
-      status: "Success", 
-      total: 267, 
-      failed: 0, 
+      status: "Success",
+      total: 267,
+      failed: 0,
       success: 267,
-      failedRecipients: []
+      failedRecipients: [],
     },
-    { 
-      date: "2025-01-14 09:15:28", 
-      sender: "info@company.com", 
+    {
+      date: "2025-01-14 09:15:28",
+      sender: "info@company.com",
       recipient: "blocked1@provider.com",
-      status: "Fail", 
-      total: 1, 
-      failed: 1, 
+      status: "Fail",
+      total: 1,
+      failed: 1,
       success: 0,
-      failedRecipients: [
-        { email: "blocked1@provider.com", reason: "Message blocked by email provider" }
-      ]
+      failedRecipients: [{ email: "blocked1@provider.com", reason: "Message blocked by email provider" }],
     },
-    { 
-      date: "2025-01-13 17:30:50", 
-      sender: "admin@company.com", 
+    {
+      date: "2025-01-13 17:30:50",
+      sender: "admin@company.com",
       recipient: "users@platform.com",
-      status: "Success", 
-      total: 156, 
-      failed: 0, 
-      success: 156, 
-      failedRecipients: []
+      status: "Success",
+      total: 156,
+      failed: 0,
+      success: 156,
+      failedRecipients: [],
     },
-    { 
-      date: "2025-01-13 16:22:10", 
-      sender: "marketing@company.com", 
+    {
+      date: "2025-01-13 16:22:10",
+      sender: "marketing@company.com",
       recipient: "subscribers@newsletter.com",
-      status: "Success", 
-      total: 298, 
-      failed: 0, 
-      success: 298, 
-      failedRecipients: []
+      status: "Success",
+      total: 298,
+      failed: 0,
+      success: 298,
+      failedRecipients: [],
     },
-    { 
-      date: "2025-01-13 15:18:45", 
-      sender: "support@company.com", 
+    {
+      date: "2025-01-13 15:18:45",
+      sender: "support@company.com",
       recipient: "noreply@closed.com",
-      status: "Fail", 
-      total: 1, 
-      failed: 1, 
+      status: "Fail",
+      total: 1,
+      failed: 1,
       success: 0,
-      failedRecipients: [
-        { email: "noreply@closed.com", reason: "Mailbox unavailable" }
-      ]
+      failedRecipients: [{ email: "noreply@closed.com", reason: "Mailbox unavailable" }],
     },
-    { 
-      date: "2025-01-13 14:05:33", 
-      sender: "sales@company.com", 
+    {
+      date: "2025-01-13 14:05:33",
+      sender: "sales@company.com",
       recipient: "contacts@enterprise.com",
-      status: "Success", 
-      total: 334, 
-      failed: 0, 
-      success: 334, 
-      failedRecipients: []
+      status: "Success",
+      total: 334,
+      failed: 0,
+      success: 334,
+      failedRecipients: [],
     },
-    { 
-      date: "2025-01-13 11:40:22", 
-      sender: "hr@company.com", 
+    {
+      date: "2025-01-13 11:40:22",
+      sender: "hr@company.com",
       recipient: "employees@company.com",
-      status: "Success", 
-      total: 145, 
-      failed: 0, 
-      success: 145, 
-      failedRecipients: []
+      status: "Success",
+      total: 145,
+      failed: 0,
+      success: 145,
+      failedRecipients: [],
     },
-    { 
-      date: "2025-01-12 16:55:18", 
-      sender: "admin@company.com", 
+    {
+      date: "2025-01-12 16:55:18",
+      sender: "admin@company.com",
       recipient: "all@company.com",
-      status: "Success", 
-      total: 223, 
-      failed: 0, 
-      success: 223, 
-      failedRecipients: []
+      status: "Success",
+      total: 223,
+      failed: 0,
+      success: 223,
+      failedRecipients: [],
     },
-    { 
-      date: "2025-01-12 15:25:40", 
-      sender: "marketing@company.com", 
+    {
+      date: "2025-01-12 15:25:40",
+      sender: "marketing@company.com",
       recipient: "protect1@domain.com",
-      status: "Fail", 
-      total: 1, 
-      failed: 1, 
+      status: "Fail",
+      total: 1,
+      failed: 1,
       success: 0,
-      failedRecipients: [
-        { email: "protect1@domain.com", reason: "Sender blocked by recipient" }
-      ]
+      failedRecipients: [{ email: "protect1@domain.com", reason: "Sender blocked by recipient" }],
     },
-    { 
-      date: "2025-01-12 14:12:55", 
-      sender: "support@company.com", 
+    {
+      date: "2025-01-12 14:12:55",
+      sender: "support@company.com",
       recipient: "help@customer.com",
-      status: "Success", 
-      total: 167, 
-      failed: 0, 
-      success: 167, 
-      failedRecipients: []
+      status: "Success",
+      total: 167,
+      failed: 0,
+      success: 167,
+      failedRecipients: [],
     },
-    { 
-      date: "2025-01-12 12:48:30", 
-      sender: "sales@company.com", 
+    {
+      date: "2025-01-12 12:48:30",
+      sender: "sales@company.com",
       recipient: "buyers@market.com",
-      status: "Success", 
-      total: 289, 
-      failed: 0, 
-      success: 289, 
-      failedRecipients: []
+      status: "Success",
+      total: 289,
+      failed: 0,
+      success: 289,
+      failedRecipients: [],
     },
-    { 
-      date: "2025-01-12 10:30:15", 
-      sender: "info@company.com", 
+    {
+      date: "2025-01-12 10:30:15",
+      sender: "info@company.com",
       recipient: "dns@error.com",
-      status: "Fail", 
-      total: 1, 
-      failed: 1, 
+      status: "Fail",
+      total: 1,
+      failed: 1,
       success: 0,
-      failedRecipients: [
-        { email: "dns@error.com", reason: "DNS lookup failed" }
-      ]
+      failedRecipients: [{ email: "dns@error.com", reason: "DNS lookup failed" }],
     },
   ];
 
@@ -361,43 +338,35 @@ const Activity = () => {
               <Table>
                 <TableHeader>
                   <TableRow>
-                  <TableHead>สถานะ</TableHead>
-                  <TableHead>ผู้ส่ง</TableHead>
-                  <TableHead>ผู้รับ</TableHead>
-                  <TableHead>สาเหตุ</TableHead>
-                  <TableHead>วันที่ส่ง</TableHead>
-                </TableRow>
-              </TableHeader>
+                    <TableHead>Event</TableHead>
+                    <TableHead>Sender</TableHead>
+                    <TableHead>Recipient</TableHead>
+                    <TableHead>สาเหตุ</TableHead>
+                    <TableHead>วันที่ส่ง</TableHead>
+                  </TableRow>
+                </TableHeader>
                 <TableBody>
-                {paginatedData.map((item, index) => {
-                  const reason = item.failedRecipients?.[0]?.reason || "-";
-                  
-                  return (
-                    <TableRow key={index}>
-                      <TableCell>
-                        <span
-                          className={
-                            item.status === "Success"
-                              ? "text-success"
-                              : "text-destructive"
-                          }
-                        >
-                          {item.status}
-                        </span>
-                      </TableCell>
-                      <TableCell className="font-medium">{item.sender}</TableCell>
-                      <TableCell className="font-medium">{item.recipient}</TableCell>
-                      <TableCell className="text-muted-foreground">
-                        {item.status === "Fail" ? reason : "-"}
-                      </TableCell>
-                      <TableCell className="whitespace-nowrap">{item.date}</TableCell>
-                    </TableRow>
-                  );
-                })}
+                  {paginatedData.map((item, index) => {
+                    const reason = item.failedRecipients?.[0]?.reason || "-";
+
+                    return (
+                      <TableRow key={index}>
+                        <TableCell>
+                          <span className={item.status === "Success" ? "text-success" : "text-destructive"}>
+                            {item.status}
+                          </span>
+                        </TableCell>
+                        <TableCell className="font-medium">{item.sender}</TableCell>
+                        <TableCell className="font-medium">{item.recipient}</TableCell>
+                        <TableCell className="text-muted-foreground">{item.status === "Fail" ? reason : "-"}</TableCell>
+                        <TableCell className="whitespace-nowrap">{item.date}</TableCell>
+                      </TableRow>
+                    );
+                  })}
                 </TableBody>
               </Table>
             </div>
-            
+
             <div className="mt-4 px-6 pb-6 flex items-center justify-between">
               <p className="text-sm text-muted-foreground">
                 แสดง {startIndex + 1} - {Math.min(endIndex, activityData.length)} จาก {activityData.length} รายการ
@@ -405,12 +374,12 @@ const Activity = () => {
               <Pagination>
                 <PaginationContent>
                   <PaginationItem>
-                    <PaginationPrevious 
-                      onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                    <PaginationPrevious
+                      onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
                       className={currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
                     />
                   </PaginationItem>
-                  
+
                   {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
                     <PaginationItem key={page}>
                       <PaginationLink
@@ -422,10 +391,10 @@ const Activity = () => {
                       </PaginationLink>
                     </PaginationItem>
                   ))}
-                  
+
                   <PaginationItem>
-                    <PaginationNext 
-                      onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                    <PaginationNext
+                      onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
                       className={currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"}
                     />
                   </PaginationItem>
