@@ -36,7 +36,7 @@ const Activity = () => {
       date: "2025-01-15 14:23:45",
       sender: "admin@company.com",
       recipient: "team@example.com",
-      status: "Success",
+      status: "Processed",
       tag: "",
       total: 150,
       failed: 0,
@@ -113,7 +113,7 @@ const Activity = () => {
       date: "2025-01-14 12:35:15",
       sender: "support@company.com",
       recipient: "customer@shop.com",
-      status: "Success",
+      status: "Processed",
       tag: "",
       total: 123,
       failed: 0,
@@ -374,15 +374,11 @@ const Activity = () => {
                     return (
                       <TableRow key={index}>
                         <TableCell>
-                          <Badge variant={item.status === "Success" ? "default" : "destructive"}>
-                            {item.status}
-                          </Badge>
+                          <Badge variant={item.status === "Success" ? "default" : "destructive"}>{item.status}</Badge>
                         </TableCell>
                         <TableCell className="font-medium">{item.sender}</TableCell>
                         <TableCell className="font-medium">{item.recipient}</TableCell>
-                        <TableCell>
-                          {item.tag && <Badge variant="destructive">{item.tag}</Badge>}
-                        </TableCell>
+                        <TableCell>{item.tag && <Badge variant="destructive">{item.tag}</Badge>}</TableCell>
                         <TableCell>
                           {item.status === "Fail" ? <Badge variant="outline">{reason}</Badge> : "-"}
                         </TableCell>
