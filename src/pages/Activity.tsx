@@ -358,7 +358,7 @@ const Activity = () => {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>สถานะ</TableHead>
+                    <TableHead>Event</TableHead>
                     <TableHead>Sender</TableHead>
                     <TableHead>Recipient</TableHead>
                     <TableHead>Tag</TableHead>
