@@ -19,10 +19,10 @@ const items = [
 
 export function AppSidebar() {
   return (
-    <Sidebar collapsible="icon">
-      <SidebarContent>
-        <div className="p-4 border-b">
-          <h1 className="text-xl font-bold text-primary">
+    <Sidebar collapsible="icon" className="border-r shadow-sm">
+      <SidebarContent className="bg-sidebar">
+        <div className="p-4 border-b border-sidebar-border">
+          <h1 className="text-xl font-bold text-sidebar-primary">
             Mail Relay Report
           </h1>
         </div>
@@ -39,8 +39,8 @@ export function AppSidebar() {
                       end
                       className={({ isActive }) =>
                         isActive
-                          ? "bg-primary text-primary-foreground font-medium"
-                          : "hover:bg-secondary"
+                          ? "bg-sidebar-primary text-sidebar-primary-foreground font-medium shadow-sm"
+                          : "hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors"
                       }
                     >
                       <item.icon />

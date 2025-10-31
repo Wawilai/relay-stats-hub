@@ -23,7 +23,7 @@ const Layout = ({ children }: LayoutProps) => {
       <div className="min-h-screen flex w-full">
         <AppSidebar />
         <div className="flex-1 flex flex-col">
-          <header className="sticky top-0 z-50 h-16 border-b bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/80">
+          <header className="sticky top-0 z-50 h-16 border-b bg-card shadow-sm backdrop-blur supports-[backdrop-filter]:bg-card/95">
             <div className="flex h-full items-center justify-between px-6 gap-4">
               <div className="flex items-center gap-4 flex-1">
                 <SidebarTrigger />
