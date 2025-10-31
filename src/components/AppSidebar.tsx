@@ -9,8 +9,6 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarTrigger,
-  useSidebar,
 } from "@/components/ui/sidebar";
 
 const items = [
@@ -20,14 +18,12 @@ const items = [
 ];
 
 export function AppSidebar() {
-  const { open } = useSidebar();
-
   return (
     <Sidebar collapsible="icon">
       <SidebarContent>
-        <div className="p-4">
-          <h1 className={`font-bold text-primary transition-all ${open ? "text-xl" : "text-sm"}`}>
-            {open ? "Mail Relay Report" : "MRR"}
+        <div className="p-4 border-b">
+          <h1 className="text-xl font-bold text-primary">
+            Mail Relay Report
           </h1>
         </div>
 
@@ -37,7 +33,7 @@ export function AppSidebar() {
             <SidebarMenu>
               {items.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
+                  <SidebarMenuButton asChild tooltip={item.title}>
                     <NavLink
                       to={item.url}
                       end
@@ -47,8 +43,8 @@ export function AppSidebar() {
                           : "hover:bg-secondary"
                       }
                     >
-                      <item.icon className="h-4 w-4" />
-                      {open && <span>{item.title}</span>}
+                      <item.icon />
+                      <span>{item.title}</span>
                     </NavLink>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
