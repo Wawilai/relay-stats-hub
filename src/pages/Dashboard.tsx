@@ -1,5 +1,4 @@
 import { useState } from "react";
-import Layout from "@/components/Layout";
 import KPICard from "@/components/dashboard/KPICard";
 import EmailChart from "@/components/dashboard/EmailChart";
 import TimeDistributionChart from "@/components/dashboard/TimeDistributionChart";
@@ -59,7 +58,7 @@ const Dashboard = () => {
   const chartData = viewMode === "weekly" ? weeklyData : last30DaysData;
 
   return (
-    <Layout>
+    <>
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <h2 className="text-3xl font-bold">Dashboard</h2>
@@ -88,7 +87,7 @@ const Dashboard = () => {
 
         <TopFailureTable data={topFailures} />
       </div>
-    </Layout>
+    </>
   );
 };
 
