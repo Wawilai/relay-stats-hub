@@ -1,4 +1,4 @@
-import { BarChart3, FileText, Activity } from "lucide-react";
+import { BarChart3, FileText, Activity, Mail } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import {
   Sidebar,
@@ -15,6 +15,7 @@ const items = [
   { title: "Dashboard", url: "/", icon: BarChart3 },
   { title: "Activity", url: "/activity", icon: Activity },
   { title: "Report", url: "/report", icon: FileText },
+  { title: "Mail Relay", url: "/mailrelay", icon: Mail },
 ];
 
 export function AppSidebar() {

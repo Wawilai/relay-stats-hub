@@ -8,6 +8,7 @@ import Dashboard from "./pages/Dashboard";
 import Report from "./pages/Report";
 import ReportDetails from "./pages/ReportDetails";
 import Activity from "./pages/Activity";
+import MailRelay from "./pages/MailRelay";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -24,6 +25,7 @@ const App = () => (
             <Route path="/report" element={<Report />} />
             <Route path="/report/details" element={<ReportDetails />} />
             <Route path="/activity" element={<Activity />} />
+            <Route path="/mailrelay" element={<MailRelay />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
