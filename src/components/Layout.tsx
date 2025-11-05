@@ -12,12 +12,19 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
+import { useNavigate } from "react-router-dom";
 
 interface LayoutProps {
   children: React.ReactNode;
 }
 
 const Layout = ({ children }: LayoutProps) => {
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    navigate("/login");
+  };
+
   return (
     <SidebarProvider>
       <div className="min-h-screen flex w-full">
@@ -65,7 +72,10 @@ const Layout = ({ children }: LayoutProps) => {
                     <DropdownMenuItem>โปรไฟล์</DropdownMenuItem>
                     <DropdownMenuItem>การตั้งค่า</DropdownMenuItem>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem className="text-destructive">
+                    <DropdownMenuItem 
+                      className="text-destructive"
+                      onClick={handleLogout}
+                    >
                       ออกจากระบบ
                     </DropdownMenuItem>
                   </DropdownMenuContent>
